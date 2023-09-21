@@ -54,12 +54,13 @@
                 <form id="preset-form" class="p-4"> <!-- Disable when data is not submitted-->
                     <label class="block mb-2">
                         <span class="text-gray-700">Select Presets:</span>
-                        <select disabled id="preset-dropdown"
+                        <select id="preset-dropdown"
                             class="mt-1 block w-full border border-gray-300 rounded py-2 px-3 focus:outline-none focus:ring focus:border-blue-300">
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
+                            <option value="none">none</option>
+                            <option value="all_uc1">all_uc1</option>
+                            <option value="thorax(andreas)">thorax(andreas)</option>
+                            <option value="knee_angles">knee_angles</option>
+                            <option value="knee_angles & moments">knee_angles & moments</option>
                         </select>
                     </label>
                     <button id="send-button" type="button"

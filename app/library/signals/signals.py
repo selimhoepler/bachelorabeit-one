@@ -54,11 +54,14 @@ def get_signals():   # return list signal_names of json signals, the keys of the
 def get_preset(signal_dict, signal_names, test_key:int):
     preset_val = signal_names[test_key]
     preset = signal_dict[preset_val]
-    print(preset)
+    print(f"This is the preset: {preset}")
     return preset
 
+
+
 def signal_data_selection(
-        signal_int:int, 
+ #       signal_int:int, 
+        preset,
         array_data,
         side,
         pre_processing = 'euclidean',
@@ -74,7 +77,9 @@ def signal_data_selection(
     """
 
     signal_dict, signal_names = get_signals()
-    preset = get_preset(signal_dict, signal_names, signal_int)
+    #test_preset = get_preset(signal_dict, signal_names, signal_int)   # gets me a preset with an int, probably not used later
+
+    
     n_list = list()         # list of signal keys, should be customizable, but is always one int //Subsampling rate, same as in execute_models
     n_list.append(5)
 

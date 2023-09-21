@@ -248,7 +248,7 @@ const testButton = document.getElementById("test-button");
 var checkBoxData = null;
 
 
-testButton.addEventListener("click",  () => {
+testButton.addEventListener("click", () => {
     console.log(test_data);
     createCheckboxes(test_data);
 });
@@ -407,13 +407,44 @@ document.addEventListener("DOMContentLoaded", function () {
 
     sendButton.addEventListener("click", async () => {
         const selectedPreset = presetDropdown.value;
+        /* 
+        
+        TESTBLOCK FOR SIGNALS JSON
+        WORKS
+        
+        TODO: convert the presets into JS
+        
+        */
+
+        const preset = getSignalJSON();
 
 
 
+        try {
+            const response = await fetch("/signals", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(preset),
+            });
 
-        getSignalJSON();
+            if (response.ok) {
+                console.log("Option erfolgreich ans Backend gesendet.");
+                console.log(await response.json());
+            } else {
+                console.error("Fehler beim Senden der Option ans Backend:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Fehler1 beim Senden der Option ans Backend:", error);
+        }
 
 
+
+        /* 
+        END OF TESTBLOCK
+        
+        */
 
 
 
@@ -448,9 +479,9 @@ document.addEventListener("DOMContentLoaded", function () {
 // function to get the signal JSON
 
 
-const getSignalJSON =  () => {
+const getSignalJSON = () => {
 
-    const container = document.getElementById('checkbox-container'); 
+    const container = document.getElementById('checkbox-container');
 
     const signals = [];
     const columns = [];
@@ -469,9 +500,9 @@ const getSignalJSON =  () => {
             const signalBoxesContainer = subContainer.querySelector('.signalboxes-container');
             const signalBoxes = signalBoxesContainer.querySelectorAll('input[type="checkbox"]');
 
-            signalBoxes.forEach ((signalBox, index) => {
+            signalBoxes.forEach((signalBox, index) => {
                 if (signalBox.checked) {
-                    checkedColumns.push(index + index +1);
+                    checkedColumns.push(index + index + 1);
                 }
             });
 
@@ -492,6 +523,128 @@ const getSignalJSON =  () => {
 
 
 }
+
+
+//turning presets into checkboxes
+
+function convertPresetToCheckboxes(preset) {
+
+    const container = document.getElementById('checkbox-container');
+    const subContainer = container.querySelectorAll('.checkbox-subcontainer');
+    //iterate through the subcontainers
+    subContainer.forEach((subContainer) => {
+        //get the checkbox
+        const checkbox = subContainer.querySelector('input[type="checkbox"]');
+        checkbox.checked = false
+        //check if the checkbox is checked
+        const checkboxName = checkbox.name;
+
+        const matchingKey = Object.keys(preset['signals']).find(key => preset['signals'][key] === checkboxName);
+
+        if (matchingKey) {
+            // matchingKey contains the key where the value matches checkboxName
+            console.log(`The checkbox name "${checkboxName}" exists in the key "${matchingKey}" in preset['signals'].`);
+            checkbox.checked = true
+
+            const signalBoxesContainer = subContainer.querySelector('.signalboxes-container');
+            const signalBoxes = signalBoxesContainer.querySelectorAll('input[type="checkbox"]');
+
+
+
+        }
+    });
+}
+
+
+
+function convertPresetToCheckboxes2(preset) {
+    const container = document.getElementById('checkbox-container');
+    const subContainers = container.querySelectorAll('.checkbox-subcontainer');
+    
+    // Iterate through the subcontainers
+    subContainers.forEach((subContainer, index) => {
+        const checkbox = subContainer.querySelector('input[type="checkbox"]');
+        const checkboxName = checkbox.name;
+
+        // Find the index of this checkbox name in the preset signals
+        const matchingIndex = preset.signals.indexOf(checkboxName);
+
+        // If found, set the main checkbox and sub-checkboxes accordingly
+        if (matchingIndex !== -1) {
+            checkbox.checked = true;
+
+            const columnIndices = preset.columns[matchingIndex];
+            const signalBoxesContainer = subContainer.querySelector('.signalboxes-container');
+            const signalBoxes = signalBoxesContainer.querySelectorAll('input[type="checkbox"]');
+
+            // Reset all sub-checkboxes
+            signalBoxes.forEach(box => box.checked = false);
+
+            // Check the sub-checkboxes according to preset
+            columnIndices.forEach(idx => {
+                const boxIndex = (idx - 1) / 2; // Convert your 3-based index to 0-based
+                if (signalBoxes[boxIndex]) {
+                    signalBoxes[boxIndex].checked = true;
+                }
+            });
+        } else {
+            // Uncheck the main checkbox if it is not in the preset
+            checkbox.checked = false;
+        }
+    });
+}
+
+
+
+
+
+
+/* 
+PRESETS FROM signals.JSON
+-all_uc1
+-thorax(andreas)
+-knee_angles
+-knee_angles&moments */
+
+presetDropdown.addEventListener("change", async () => {
+
+    const preset = presetDropdown.value
+    console.log(preset)
+
+    if (preset != 'none') {
+        fetch('/static/config/signals.json')
+            .then(response => response.json())
+            .then(data => {
+                // Use the parsed JSON data here
+                console.log(data)
+                const myPreset = data[preset]
+                console.log(myPreset);
+
+                convertPresetToCheckboxes3(myPreset);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    } else {
+        //uncheck all boxes
+        const container = document.getElementById('checkbox-container');
+        const subContainer = container.querySelectorAll('.checkbox-subcontainer');
+        //iterate through the subcontainers
+        subContainer.forEach((subContainer) => {
+            //get the checkbox
+            const checkbox = subContainer.querySelector('input[type="checkbox"]');
+            checkbox.checked = false
+        });
+    }
+
+
+}
+)
+
+
+
+
+
 
 
 

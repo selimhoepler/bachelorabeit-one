@@ -77,7 +77,7 @@ async def upload_files(data_file: UploadFile = File(...), metadata_file: UploadF
 async def process_signals(preset_data: dict):  #OPTIONAL: Subsampling_rate: int, legs: str, pre_processing: str (Advanced Options)
     try:
         selected_preset = preset_data.get("preset")
-        
+        print(f"this is selected preset as dict: {preset_data}")
         
         try:
             array_data, meta_data, side = helpers.loadPickle()
@@ -87,7 +87,11 @@ async def process_signals(preset_data: dict):  #OPTIONAL: Subsampling_rate: int,
             return JSONResponse(content={"error": str(e)}, status_code=500)
         
         try:
-            signal_data, signal_names = signal_data_selection(int(selected_preset), array_data, side)
+           # signal_data, signal_names = signal_data_selection(int(selected_preset), array_data, side)
+           # trying with JSON Preset
+
+           signal_data, signal_names = signal_data_selection(preset_data, array_data, side)
+        
         except Exception as e:
             print("Fehler beim Laden der Signale:", e)
             logging.exception(e)
