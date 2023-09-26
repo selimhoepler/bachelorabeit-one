@@ -1,0 +1,17 @@
+/first-try-venv
+
+/app/temp
+
+tsne_dict.txt
+
+test.json
+
+tsne_results.txt
+
+exception.txt
+
+app_log.txt
+
+/my-venv
+
+**/__pycache__/
