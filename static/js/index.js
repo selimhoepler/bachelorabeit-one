@@ -293,6 +293,9 @@ dataSubmitBtn.addEventListener('click', async () => {
             checkBoxData = data.response.checkboxes;
             console.log(checkBoxData);
 
+            attributes = data.response.attributes
+            console.log(attributes)
+
             // Erstelle die Checkboxen
             createCheckboxes(checkBoxData);
 
@@ -333,13 +336,13 @@ function createCheckboxes(jsonData) {
 
     // Create checkboxes for angle/moment values
     for (const keys in data) {
-        console.log(keys);
+        
 
         for (const key in data[keys]) {
-            console.log(key);
+            
 
             const checkboxData = data[keys][key];
-            console.log(checkboxData);
+            
             const checkboxContainer = document.createElement('div');
             checkboxContainer.classList.add('flex');
             checkboxContainer.classList.add('justify-between');
@@ -560,7 +563,7 @@ function convertPresetToCheckboxes(preset) {
 function convertPresetToCheckboxes2(preset) {
     const container = document.getElementById('checkbox-container');
     const subContainers = container.querySelectorAll('.checkbox-subcontainer');
-    
+
     // Iterate through the subcontainers
     subContainers.forEach((subContainer, index) => {
         const checkbox = subContainer.querySelector('input[type="checkbox"]');
@@ -620,7 +623,7 @@ presetDropdown.addEventListener("change", async () => {
                 const myPreset = data[preset]
                 console.log(myPreset);
 
-                convertPresetToCheckboxes3(myPreset);
+                convertPresetToCheckboxes2(myPreset);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -634,6 +637,12 @@ presetDropdown.addEventListener("change", async () => {
             //get the checkbox
             const checkbox = subContainer.querySelector('input[type="checkbox"]');
             checkbox.checked = false
+
+            const signalBoxesContainer = subContainer.querySelector('.signalboxes-container');
+            const signalBoxes = signalBoxesContainer.querySelectorAll('input[type="checkbox"]');
+
+            // Reset all sub-checkboxes
+            signalBoxes.forEach(box => box.checked = false);
         });
     }
 
@@ -696,6 +705,9 @@ function blendColors(colorStart, colorEnd, ratio) {
     return `rgb(${r},${g},${b})`;
 }
 
+
+let chart;
+
 executeButton.addEventListener("click", async () => {
     try {
         const response = await fetch("/execute", {
@@ -715,39 +727,50 @@ executeButton.addEventListener("click", async () => {
                 // fillColor: getGradientColor(item.z)
             }));
 
-            var options = {
-                series: [{
+
+            if (chart) {
+                // Update the existing chart with new data
+                chart.updateSeries([{
                     name: "Sample B",
                     data: series
-                }],
-                chart: {
-                    height: '100%',
-                    type: 'scatter',
-                    zoom: {
-                        enabled: true,
-                        type: 'xy'
-                    }
-                },
-                xaxis: {
-                    tickAmount: 10,
-                    labels: {
-                        formatter: function (val) {
-                            return parseFloat(val).toFixed(1);
-                        }
-                    }
-                },
-                yaxis: {
-                    show: false,
-                    tickAmount: 7
-                },
-                markers: {
-                    size: 8,
-                    colors: series.map(item => item.fillColor)
-                }
-            };
+                }]);
+            } else {
 
-            chart = new ApexCharts(document.getElementById("plot-container"), options);
-            chart.render();
+                var options = {
+                    series: [{
+                        name: "Sample B",
+                        data: series
+                    }],
+                    chart: {
+                        height: '100%',
+                        type: 'scatter',
+                        zoom: {
+                            enabled: true,
+                            type: 'xy'
+                        }
+                    },
+                    xaxis: {
+                        tickAmount: 10,
+                        labels: {
+                            formatter: function (val) {
+                                return parseFloat(val).toFixed(1);
+                            }
+                        }
+                    },
+                    yaxis: {
+                        show: false,
+                        tickAmount: 7
+                    },
+                    markers: {
+                        size: 8,
+                        colors: series.map(item => item.fillColor)
+                    }
+                };
+
+                chart = new ApexCharts(document.getElementById("plot-container"), options);
+                chart.render();
+
+            }
         } else {
             console.error("Fehler beim Senden der Modelle ans Backend:", response.statusText);
         }

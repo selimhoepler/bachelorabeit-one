@@ -8,6 +8,7 @@ from .library.ingest.ingest import *
 import tempfile
 from .library.helpers import helpers as helpers
 from .library.signals.signals import signal_data_selection, create_checkboxes_signals
+from .library.attributes.attributes import getAttributes
 import logging
 from .library.models import create_models, execute_models 
 import pprint
@@ -59,12 +60,13 @@ async def upload_files(data_file: UploadFile = File(...), metadata_file: UploadF
 
         try:
             temp_checkboxes = create_checkboxes_signals(array_data)
+            attributes = getAttributes(meta_data)
         except Exception as e:
             print("Fehler beim Erstellen der Checkboxen:", e)
             message = "Fehler beim Erstellen der Checkboxen"
             logging.exception(e)
 
-        return JSONResponse(content={"response": {"message": message, 'checkboxes': temp_checkboxes}}, status_code=200)
+        return JSONResponse(content={"response": {"message": message, 'checkboxes': temp_checkboxes, 'attributes': attributes}}, status_code=200)
 
     except Exception as e:
         print("Fehler beim Einlesen der Dateien:")
