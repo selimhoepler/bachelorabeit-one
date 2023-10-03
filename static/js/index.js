@@ -293,6 +293,9 @@ dataSubmitBtn.addEventListener('click', async () => {
             checkBoxData = data.response.checkboxes;
             console.log(checkBoxData);
 
+            attributes = data.response.attributes
+            console.log(attributes)
+
             // Erstelle die Checkboxen
             createCheckboxes(checkBoxData);
 
@@ -333,13 +336,13 @@ function createCheckboxes(jsonData) {
 
     // Create checkboxes for angle/moment values
     for (const keys in data) {
-        console.log(keys);
+        
 
         for (const key in data[keys]) {
-            console.log(key);
+            
 
             const checkboxData = data[keys][key];
-            console.log(checkboxData);
+            
             const checkboxContainer = document.createElement('div');
             checkboxContainer.classList.add('flex');
             checkboxContainer.classList.add('justify-between');

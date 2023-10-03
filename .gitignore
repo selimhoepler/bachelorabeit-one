@@ -15,3 +15,4 @@ app_log.txt
 /my-venv
 
 **/__pycache__/
+app_log.txt
