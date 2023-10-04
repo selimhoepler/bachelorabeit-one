@@ -8,7 +8,7 @@ from .library.ingest.ingest import *
 import tempfile
 from .library.helpers import helpers as helpers
 from .library.signals.signals import signal_data_selection, create_checkboxes_signals
-from .library.attributes.attributes import getAttributes
+from .library.attributes.attributes import getAttributes, getOnlySelectedData
 import logging
 from .library.models import create_models, execute_models 
 import pprint
@@ -190,6 +190,8 @@ async def execute_all_models(
 
             signal_tsne_data = tsne_results[model_name]['tsne_data']  #get_clean_results from container
 
+            data_ids = tsne_results[model_name]['ids']
+
             print(f'[INFO] signal_tsne_data: {signal_tsne_data}')
 
             x_data = list(signal_tsne_data[:,0])
@@ -200,18 +202,49 @@ async def execute_all_models(
 
             print(f'[INFO] y_data: {y_data}')
 
+            z_data = list(data_ids)
+
             results = []
             for i in range(len(signal_tsne_data)):
-                results.append({"x": x_data[i], "y": y_data[i], "z": 1})
+                results.append({"x": x_data[i], "y": y_data[i], "z": z_data[i]})
+
+            print(f'[INFO] results: {results}')
 
             response_data = {"scatterplot_data": results}
+
+
+
+
+            _, metadata, _ = helpers.loadPickle()
+
+            filtered_data = getOnlySelectedData(z_data, metadata)
+
+            
+
+            helpers.saveJSON(filtered_data)
+
+
+
+
+
+
+
 
             json_str = json.dumps(response_data, cls=helpers.NumpyEncoder)
 
             # jsonresults = results.tolist()
 
 
-            write_dict_to_text_file(tsne_results, output_file_path)
+
+
+
+            
+
+
+
+
+
+            write_dict_to_text_file(tsne_results, output_file_path) #debugging
         except Exception as e:
             print("Fehler beim Speichern der Modelle:", e)
             logging.exception(e)

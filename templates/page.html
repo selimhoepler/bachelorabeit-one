@@ -16,16 +16,15 @@
         <div class="h-2/5 p-1" id="greenCont">
             <div class="border-2 border-indigo-600 h-full overflow-auto">
                 <form class="flex flex-col items-start p-1" id="data-upload-form">
-                    <label class="block w-full">
-                        <span class="text-sm">Input data</span>
+                    <label class="block w-full text-sm font-medium text-gray-900 dark:text-white" for="input-data">
+                        Input data
                         <input type="file" accept=".csv"
-                            class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+                            class="block w-full mb-5 text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                             id="input-data" />
                     </label>
-                    <label class="block w-full">
-                        <span class="text-sm">Input metadata</span>
-                        <input type="file" accept=".csv" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700
-                            hover:file:bg-violet-100" id="input-metadata" />
+                    <label class="block w-full text-sm font-medium text-gray-900 dark:text-white" for="input-metadata">
+                        Input metadata
+                        <input type="file" accept=".csv" class="block w-full mb-5 text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="input-metadata" />
                     </label>
 
                     <button type="button" id="data-submit-button"
@@ -47,25 +46,72 @@
         </div>
         <div class="h-3/5 p-1 " id="redCont">
             <div class="border-2 border-indigo-600 h-full overflow-auto">
-                <div id="checkbox-container" class="flex flex-col">
 
+
+
+                <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
+                    <ul class="flex -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent"
+                        role="tablist">
+                        <li class="w-full" role="presentation">
+                            <button class="inline-block p-4 border-b-2 rounded-t-lg" id="signals-tab"
+                                data-tabs-target="#signals" type="button" role="tab" aria-controls="signals"
+                                aria-selected="false">Signals</button>
+                        </li>
+                        <li class="w-full" role="presentation">
+                            <button
+                                class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                                id="attributes-tab" data-tabs-target="#attributes" type="button" role="tab"
+                                aria-controls="attributes" aria-selected="false">Attributes</button>
+                        </li>
+
+                    </ul>
+                </div>
+                <div id="myTabContent">
+                    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="signals" role="tabpanel"
+                        aria-labelledby="profile-tab">
+
+
+
+                        <div id="signal-checkbox-container" class="flex flex-col"> </div>
+
+
+                        <form id="preset-form" class="p-4"> <!-- Disable when data is not submitted-->
+                            <label class="block mb-2">
+                                <span class="text-gray-700">Select Presets:</span>
+                                <select id="preset-dropdown"
+                                    class="mt-1 block w-full border border-gray-300 rounded py-2 px-3 focus:outline-none focus:ring focus:border-blue-300">
+                                    <option value="none">none</option>
+                                    <option value="all_uc1">all_uc1</option>
+                                    <option value="thorax(andreas)">thorax(andreas)</option>
+                                    <option value="knee_angles">knee_angles</option>
+                                    <option value="knee_angles&moments">knee_angles & moments</option>
+                                </select>
+                            </label>
+                            <button id="send-button" type="button"
+                                class="px-4 py-2 bg-blue-500 text-white rounded ">Send</button>
+                        </form>
+
+
+
+                    </div>
+                    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="attributes" role="tabpanel"
+                        aria-labelledby="dashboard-tab">
+                        <div id="attribute-checkbox-container" class="flex flex-col"> </div>
+                            
+
+
+                    </div>
 
                 </div>
-                <form id="preset-form" class="p-4"> <!-- Disable when data is not submitted-->
-                    <label class="block mb-2">
-                        <span class="text-gray-700">Select Presets:</span>
-                        <select id="preset-dropdown"
-                            class="mt-1 block w-full border border-gray-300 rounded py-2 px-3 focus:outline-none focus:ring focus:border-blue-300">
-                            <option value="none">none</option>
-                            <option value="all_uc1">all_uc1</option>
-                            <option value="thorax(andreas)">thorax(andreas)</option>
-                            <option value="knee_angles">knee_angles</option>
-                            <option value="knee_angles&moments">knee_angles & moments</option>
-                        </select>
-                    </label>
-                    <button id="send-button" type="button"
-                        class="px-4 py-2 bg-blue-500 text-white rounded ">Send</button>
-                </form>
+
+
+
+
+
+
+
+
+
 
 
                 <button id="execute-button" type="button"
@@ -82,12 +128,18 @@
             <div class="border-2 border-indigo-600 h-full" id="plot-container">
                 <button id="test-button" type="button"
                     class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">TEST</button>
+                    <button id="test-button2" type="button"
+                    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">TEST</button>
             </div>
 
         </div>
 
         <div class="h-2/6 md:h-full xl:h-2/6 p-1 " id="yellowCont">
             <div class="border-2 border-indigo-600 h-full">
+
+
+
+
 
             </div>
 

@@ -230,6 +230,116 @@ const test_data =
     }
 }
 
+const testAttributes = [
+    "Vorname",
+    "NMP",
+    "NMP_Hemi_re",
+    "NMP_Hemi_li",
+    "Klumpfu__re",
+    "Klumpfu__li",
+    "Torsion_Allg_re",
+    "Torsion_Allg_li",
+    "Torsion_OS_innen_re",
+    "Torsion_OS_au_en_re",
+    "Torsion_OS_innen_li",
+    "Torsion_OS_au_en_li",
+    "Torsion_US_innen_re",
+    "Torsion_US_au_en_re",
+    "Torsion_US_innen_li",
+    "Torsion_US_au_en_li",
+    "Varus_OS_re",
+    "Varus_OS_li",
+    "Varus_US_re",
+    "Varus_US_li",
+    "Varus_Allg_re",
+    "Varus_Allg_li",
+    "Valgus_OS_re",
+    "Valgus_OS_li",
+    "Valgus_US_re",
+    "Valgus_US_li",
+    "Valgus_Allg_re",
+    "Valgus_Allg_li",
+    "Valgus_li",
+    "Valgus_re",
+    "Varus_li",
+    "Varus_re",
+    "Front_Mix_li",
+    "Front_Mix_re",
+    "GA_Valgus_re",
+    "GA_Valgus_li",
+    "GA_Varus_re",
+    "GA_Varus_li",
+    "Plattfuss_re",
+    "Plattfuss_li",
+    "Sprungelenksproblem_re",
+    "Sprungelenksproblem_li",
+    "Knieproblem_re",
+    "Knieproblem_li",
+    "H_ftproblem_re",
+    "H_ftproblem_li",
+    "Wirbels_ulenproblem_re",
+    "Wirbels_ulenproblem_li",
+    "NORM0_7_habituell",
+    "NORM0_7_langsam",
+    "NORM0_7_schnell",
+    "NORM8_20_habituell",
+    "NORM8_20_langsam",
+    "NORM8_20_schnell",
+    "NORM21_30_habituell",
+    "NORM21_30_langsam",
+    "NORM21_30_schnell",
+    "Dateng_teFrontalAusreichend_re",
+    "Dateng_teFrontalAusreichend_li",
+    "Alter0_7",
+    "Alter8_20",
+    "Alter21_30",
+    "Alter31_",
+    "CT_OS_au_en_re",
+    "CT_OS_au_en_li",
+    "CT_OS_innen_re",
+    "CT_OS_innen_li",
+    "CT_US_au_en_re",
+    "CT_US_au_en_li",
+    "CT_US_innen_re",
+    "CT_US_innen_li",
+    "GA_OS_au_en_re",
+    "GA_OS_au_en_li",
+    "GA_OS_innen_re",
+    "GA_OS_innen_li",
+    "GA_US_au_en_re",
+    "GA_US_au_en_li",
+    "GA_US_innen_re",
+    "GA_US_innen_li",
+    "GA_OS_au_en_1STD_re",
+    "GA_OS_au_en_1STD_li",
+    "GA_OS_innen_1STD_re",
+    "GA_OS_innen_1STD_li",
+    "GA_US_au_en_1STD_re",
+    "GA_US_au_en_1STD_li",
+    "GA_US_innen_1STD_re",
+    "GA_US_innen_1STD_li",
+    "AltesLabor",
+    "NeuesLabor",
+    "Num_Matfiles",
+    "All_ersteMessung",
+    "All_VorOP",
+    "All_nOpPrae",
+    "All_OPInKG",
+    "All_GaVorOP",
+    "All_Pr_",
+    "All_Post",
+    "NumOP",
+    "UC1_GaVorOP",
+    "UC1_betroffen_RE",
+    "UC1_betroffen_LI",
+    "HTEP_pre",
+    "HTEP_pre_RE",
+    "HTEP_pre_LI",
+    "NMPII",
+    "Hilfsmittel",
+    "DBId"
+]
+
 /* TEST OBJEKT ENDE */
 
 const dataSubmitBtn = document.getElementById('data-submit-button');
@@ -244,13 +354,20 @@ const modelsButton = document.getElementById("models-button");
 const executeButton = document.getElementById("execute-button");
 
 const testButton = document.getElementById("test-button");
+const testButton2 = document.getElementById("test-button2");
 
-var checkBoxData = null;
+
+
 
 
 testButton.addEventListener("click", () => {
     console.log(test_data);
-    createCheckboxes(test_data);
+    createSignalCheckboxes(test_data);
+});
+
+testButton2.addEventListener("click", () => {
+    console.log(testAttributes);
+    createAttributeCheckboxes(testAttributes);
 });
 
 
@@ -297,7 +414,8 @@ dataSubmitBtn.addEventListener('click', async () => {
             console.log(attributes)
 
             // Erstelle die Checkboxen
-            createCheckboxes(checkBoxData);
+            createSignalCheckboxes(checkBoxData);
+            createAttributeCheckboxes(attributes)
 
             presetDropdown.disabled = false;
             sendButton.disabled = false;
@@ -328,21 +446,21 @@ dataSubmitBtn.addEventListener('click', async () => {
 
 
 
-function createCheckboxes(jsonData) {
-    const container = document.getElementById('checkbox-container'); // Replace with the actual container element ID
+function createSignalCheckboxes(jsonData) {
+    const container = document.getElementById('signal-checkbox-container'); // Replace with the actual container element ID
 
     // Parse the JSON data
     const data = jsonData;
 
     // Create checkboxes for angle/moment values
     for (const keys in data) {
-        
+
 
         for (const key in data[keys]) {
-            
+
 
             const checkboxData = data[keys][key];
-            
+
             const checkboxContainer = document.createElement('div');
             checkboxContainer.classList.add('flex');
             checkboxContainer.classList.add('justify-between');
@@ -392,7 +510,43 @@ function createCheckboxes(jsonData) {
 // Call the function with the received JSON data
 
 
+function createAttributeCheckboxes(jsonData) {
+    const container = document.getElementById('attribute-checkbox-container'); // Replace with the actual container element ID
 
+    // Parse the JSON data
+    const data = jsonData;
+
+    // Create checkboxes for angle/moment values
+    for (const element in data) {
+
+
+
+        const checkboxContainer = document.createElement('div');
+        checkboxContainer.classList.add('flex');
+        checkboxContainer.classList.add('justify-between');
+        checkboxContainer.classList.add('attributes-checkbox-subcontainer');
+
+
+
+        // Create label for checkbox
+        const boxesLabel = document.createElement('label');
+        boxesLabel.textContent = data[element];
+        checkboxContainer.appendChild(boxesLabel);
+
+        // Create checkbox
+        const attributeCheckbox = document.createElement('input');
+        attributeCheckbox.type = 'checkbox';
+        attributeCheckbox.name = data[element];
+        // Add other attributes and event listeners as needed
+        checkboxContainer.appendChild(attributeCheckbox);
+        
+
+        // Add the checkbox container to the main container
+        container.appendChild(checkboxContainer);
+
+
+    }
+}
 
 
 
@@ -484,7 +638,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 const getSignalJSON = () => {
 
-    const container = document.getElementById('checkbox-container');
+    const container = document.getElementById('signal-checkbox-container');
 
     const signals = [];
     const columns = [];
@@ -532,7 +686,7 @@ const getSignalJSON = () => {
 
 function convertPresetToCheckboxes(preset) {
 
-    const container = document.getElementById('checkbox-container');
+    const container = document.getElementById('signal-checkbox-container');
     const subContainer = container.querySelectorAll('.checkbox-subcontainer');
     //iterate through the subcontainers
     subContainer.forEach((subContainer) => {
@@ -561,7 +715,7 @@ function convertPresetToCheckboxes(preset) {
 
 
 function convertPresetToCheckboxes2(preset) {
-    const container = document.getElementById('checkbox-container');
+    const container = document.getElementById('signal-checkbox-container');
     const subContainers = container.querySelectorAll('.checkbox-subcontainer');
 
     // Iterate through the subcontainers
@@ -630,7 +784,7 @@ presetDropdown.addEventListener("change", async () => {
             });
     } else {
         //uncheck all boxes
-        const container = document.getElementById('checkbox-container');
+        const container = document.getElementById('signal-checkbox-container');
         const subContainer = container.querySelectorAll('.checkbox-subcontainer');
         //iterate through the subcontainers
         subContainer.forEach((subContainer) => {

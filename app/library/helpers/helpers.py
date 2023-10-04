@@ -4,6 +4,7 @@ import json, numpy as np
 
 # Pfad zum gewünschten Speicherort der pickle-Dateien
 pickle_path = r"app\temp"
+json_path = r"app\temp\json"
 
 def savePickle(array_data, meta_data, side):
     # Speichern der DataFrames
@@ -47,4 +48,11 @@ class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.float32):
             return float(obj)
+        if isinstance(obj, np.int64):
+            return int(obj)
         return super().default(obj)
+    
+def saveJSON(dataframe):
+    # Save the DataFrame as a JSON file
+    
+    dataframe.to_json(json_path, orient='split', index=False)
