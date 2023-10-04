@@ -355,7 +355,7 @@ const executeButton = document.getElementById("execute-button");
 
 const testButton = document.getElementById("test-button");
 const testButton2 = document.getElementById("test-button2");
-
+const testButton3 = document.getElementById('test-button3');
 
 
 
@@ -368,6 +368,11 @@ testButton.addEventListener("click", () => {
 testButton2.addEventListener("click", () => {
     console.log(testAttributes);
     createAttributeCheckboxes(testAttributes);
+});
+
+testButton3.addEventListener("click", () => {
+
+    getCheckedAttributes();
 });
 
 
@@ -751,6 +756,26 @@ function convertPresetToCheckboxes2(preset) {
     });
 }
 
+
+
+
+
+function getCheckedAttributes () {
+    const container = document.getElementById('attribute-checkbox-container')
+
+
+    const checkedCheckboxes = container.querySelectorAll('input:checked')
+
+    var checkedList = []
+
+    checkedCheckboxes.forEach(element => {
+        checkedList.append[element]
+    });
+
+    
+
+    console.log(checkedList)
+}
 
 
 

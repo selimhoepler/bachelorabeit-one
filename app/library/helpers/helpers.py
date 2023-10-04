@@ -53,6 +53,21 @@ class NumpyEncoder(json.JSONEncoder):
         return super().default(obj)
     
 def saveJSON(dataframe):
-    # Save the DataFrame as a JSON file
+    """
+    Saves the dataframe as a JSON file at the specified path.
     
-    dataframe.to_json(json_path, orient='split', index=False)
+    Parameters:
+    dataframe (pd.DataFrame): The dataframe to save.
+    """
+    # Convert the DataFrame to a JSON string
+    json_string = dataframe.to_json(orient='split', index=False)
+    
+    # Define the file path
+    file_path = os.path.join(json_path, "attributes.json")
+    
+    # Write the JSON string to a file
+    with open(file_path, "w") as f:
+        json.dump(json.loads(json_string), f)
+
+    
+
