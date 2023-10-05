@@ -349,6 +349,8 @@ const inputFilesMetadata = document.getElementById('input-metadata');
 const presetDropdown = document.getElementById("preset-dropdown");
 const sendButton = document.getElementById("send-button");
 
+const attributeContainer = document.getElementById("attribute-checkbox-container")
+
 const modelsButton = document.getElementById("models-button");
 
 const executeButton = document.getElementById("execute-button");
@@ -357,6 +359,8 @@ const testButton = document.getElementById("test-button");
 const testButton2 = document.getElementById("test-button2");
 const testButton3 = document.getElementById('test-button3');
 
+let chart;
+var discreteList = [];
 
 
 
@@ -373,7 +377,10 @@ testButton2.addEventListener("click", () => {
 testButton3.addEventListener("click", () => {
 
     getCheckedAttributes();
+    getSelectedDatapoints();
 });
+
+
 
 
 dataSubmitBtn.addEventListener('click', async () => {
@@ -481,6 +488,7 @@ function createSignalCheckboxes(jsonData) {
 
             // Create label for checkbox
             const boxesLabel = document.createElement('label');
+            boxesLabel.classList.add('dark:text-white')
             boxesLabel.textContent = key;
             checkboxContainer.appendChild(boxesLabel);
 
@@ -536,6 +544,7 @@ function createAttributeCheckboxes(jsonData) {
         // Create label for checkbox
         const boxesLabel = document.createElement('label');
         boxesLabel.textContent = data[element];
+        boxesLabel.classList.add('dark:text-white')
         checkboxContainer.appendChild(boxesLabel);
 
         // Create checkbox
@@ -544,7 +553,7 @@ function createAttributeCheckboxes(jsonData) {
         attributeCheckbox.name = data[element];
         // Add other attributes and event listeners as needed
         checkboxContainer.appendChild(attributeCheckbox);
-        
+
 
         // Add the checkbox container to the main container
         container.appendChild(checkboxContainer);
@@ -760,7 +769,7 @@ function convertPresetToCheckboxes2(preset) {
 
 
 
-function getCheckedAttributes () {
+function getCheckedAttributes() {
     const container = document.getElementById('attribute-checkbox-container')
 
 
@@ -769,13 +778,128 @@ function getCheckedAttributes () {
     var checkedList = []
 
     checkedCheckboxes.forEach(element => {
-        checkedList.append[element]
+        checkedList.push(element.name)
     });
 
-    
+
 
     console.log(checkedList)
+
+    return checkedList
 }
+
+
+
+
+
+
+function getSelectedDatapoints() {
+    return new Promise((resolve, reject) => {
+        const checkedAttributes = getCheckedAttributes();
+
+        fetch('/static/json/attributes.json')
+            .then(response => response.json())
+            .then(data => {
+                const dbid = data.columns.indexOf("DBId");
+                var indexlist = [];
+                var dbidlist = [];
+
+                data.columns.forEach(element => {
+                    if (checkedAttributes.includes(element)) {
+                        indexlist.push(data.columns.indexOf(element));
+                    }
+                });
+
+                data.data.forEach(row => {
+                    indexlist.forEach(index => {
+                        if (row[index] === 1 && !dbidlist.includes(row[dbid])) {
+                            dbidlist.push(row[dbid]);
+                        }
+                    });
+                });
+
+                resolve(dbidlist); // Resolve the promise with dbidlist
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                reject(error); // Reject the promise with error
+            });
+    });
+}
+
+
+
+
+
+
+
+
+
+/* 
+
+When an attribute checkbox is selected, the data on chart should be updated instantly
+
+for that i get a list of indexes from getSelectedDatapoints, add an eventlistener to the checkboxes and update the chart where all z-values correspond to the ones in indexlist.
+
+*/
+
+
+
+attributeContainer.addEventListener('change', async (e) => { // Add async keyword here
+    if (e.target.type === 'checkbox') {
+        try {
+            const indexList = await getSelectedDatapoints(); // Use await keyword here
+
+            console.log(indexList);
+
+            const markerSizes = chart.w.config.series[0].data.map((point, index) => {
+                if (indexList.includes(point.z)) {
+                    console.log(point);
+                    console.log(index);
+
+                    pushThisIndexAsDiscrete(index);
+
+
+                    // Size for highlighted markers
+                } else {
+                    // Default size
+                }
+            });
+            console.log(discreteList);
+
+            chart.updateOptions({
+                markers: {
+                    size: 7,
+                    discrete: [
+                        discreteList
+                    ]
+                }
+            });
+
+            discreteList = [];
+
+
+        } catch (error) {
+            console.error('Error in event listener:', error);
+        }
+    }
+});
+
+
+function pushThisIndexAsDiscrete(index) {
+    const discrete = {
+        seriesIndex: 0,
+        dataPointIndex: index,
+        fillColor: "#0A0",
+        strokeColor: "#FFF",
+        size: 7
+    }
+
+    discreteList.push(discrete);
+}
+
+
+
 
 
 
@@ -863,7 +987,7 @@ modelsButton.addEventListener("click", async () => {
 //
 
 
-function getGradientColor(value) {
+/* function getGradientColor(value) {
     const minValue = -10; // Mindestwert der dritten Dimension
     const maxValue = 10; // Höchstwert der dritten Dimension
     const colorStart = '#0061FF'; // Anfangsfarbe (Blau)
@@ -882,10 +1006,10 @@ function blendColors(colorStart, colorEnd, ratio) {
     const g = Math.round(parseInt(colorStart.substring(3, 5), 16) * (1 - ratio) + parseInt(colorEnd.substring(3, 5), 16) * ratio);
     const b = Math.round(parseInt(colorStart.substring(5, 7), 16) * (1 - ratio) + parseInt(colorEnd.substring(5, 7), 16) * ratio);
     return `rgb(${r},${g},${b})`;
-}
+} */
 
 
-let chart;
+
 
 executeButton.addEventListener("click", async () => {
     try {
@@ -903,6 +1027,7 @@ executeButton.addEventListener("click", async () => {
             const series = responseData.scatterplot_data.map(item => ({
                 x: item.x,
                 y: item.y,
+                z: item.z,
                 // fillColor: getGradientColor(item.z)
             }));
 
@@ -942,7 +1067,14 @@ executeButton.addEventListener("click", async () => {
                     },
                     markers: {
                         size: 8,
-                        colors: series.map(item => item.fillColor)
+                        colors: ['#2E93fA'],
+                        discrete: [{
+                            seriesIndex: 0,
+                            dataPointIndex: 1,
+                            fillColor: "#0A0",
+                            strokeColor: "#FFF",
+                            size: 7
+                        }]
                     }
                 };
 

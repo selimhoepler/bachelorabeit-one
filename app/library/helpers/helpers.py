@@ -4,7 +4,7 @@ import json, numpy as np
 
 # Pfad zum gewünschten Speicherort der pickle-Dateien
 pickle_path = r"app\temp"
-json_path = r"app\temp\json"
+json_path = r"static\json"
 
 def savePickle(array_data, meta_data, side):
     # Speichern der DataFrames
