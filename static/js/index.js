@@ -1,8 +1,6 @@
 
 
-//
-// Data input section
-//
+
 
 
 /* TEST OBJEKT */
@@ -342,25 +340,14 @@ const testAttributes = [
 
 /* TEST OBJEKT ENDE */
 
-const dataSubmitBtn = document.getElementById('data-submit-button');
-const inputFilesData = document.getElementById('input-data');
-const inputFilesMetadata = document.getElementById('input-metadata');
 
-const presetDropdown = document.getElementById("preset-dropdown");
-const sendButton = document.getElementById("send-button");
-
-const attributeContainer = document.getElementById("attribute-checkbox-container")
-
-const modelsButton = document.getElementById("models-button");
-
-const executeButton = document.getElementById("execute-button");
 
 const testButton = document.getElementById("test-button");
 const testButton2 = document.getElementById("test-button2");
 const testButton3 = document.getElementById('test-button3');
 
-let chart;
-var discreteList = [];
+
+
 
 
 
@@ -383,12 +370,61 @@ testButton3.addEventListener("click", () => {
 
 
 
+/* 
+    Test section end
+*/
+
+
+
+
+
+
+// declaring Constant variables
+
+const dataSubmitBtn = document.getElementById('data-submit-button');
+const inputFilesData = document.getElementById('input-data');
+const inputFilesMetadata = document.getElementById('input-metadata');
+
+const presetDropdown = document.getElementById("preset-dropdown");
+const sendButton = document.getElementById("send-button");
+
+const attributeContainer = document.getElementById("attribute-checkbox-container")
+
+const modelsButton = document.getElementById("models-button");
+
+const executeButton = document.getElementById("execute-button");
+
+
+// var for the chart 
+var chart;
+
+// helper for the chart updates
+var discreteList = [];
+
+
+
+
+
+
+ 
+/* 
+
+Data input section
+
+
+
+
+ */
+
+
 dataSubmitBtn.addEventListener('click', async () => {
-    // Überprüfe die Dateiendung
+    // Check Datatype extension
     const allowedExtensions = ['csv'];
     const dataFile = inputFilesData.files[0];
     const metadataFile = inputFilesMetadata.files[0];
 
+
+    // minor file validation
     if (!allowedExtensions.includes(dataFile.name.split('.').pop())) {
         console.error('Fehler: Ungültige Dateierweiterung für Data-Datei');
         return;
@@ -399,16 +435,19 @@ dataSubmitBtn.addEventListener('click', async () => {
         return;
     }
 
-    // Ändere den Text auf dem Button und zeige den Ladeindikator an
+    // Change style of input btn // Could be doing this in a function
     dataSubmitBtn.textContent = 'Lädt...';
     dataSubmitBtn.disabled = true;
     dataSubmitBtn.classList.remove('hover:bg-blue-600');
 
-    // Erstelle FormData-Objekt, um Dateien zu sammeln
+    // Make formData Object to collect Files
     const formData = new FormData();
     formData.append('data_file', dataFile, 'data.csv');
     formData.append('metadata_file', metadataFile, 'metadata.csv');
 
+
+    // try sending both files to the backend with the route '/ingest'
+    //
     try {
         const response = await fetch('/ingest', {
             method: 'POST',
@@ -419,6 +458,8 @@ dataSubmitBtn.addEventListener('click', async () => {
             // Erfolgreich behandelt
             const data = await response.json();
             console.log(data);
+
+            //filtering the data for the usable info for signal and attribute checkboxes
             checkBoxData = data.response.checkboxes;
             console.log(checkBoxData);
 
@@ -429,6 +470,8 @@ dataSubmitBtn.addEventListener('click', async () => {
             createSignalCheckboxes(checkBoxData);
             createAttributeCheckboxes(attributes)
 
+
+            // enable preset selection TODO: Enable disabled execute BTN (maybe after everythings done)
             presetDropdown.disabled = false;
             sendButton.disabled = false;
             sendButton.classList.add('hover:bg-blue-600');
@@ -438,7 +481,7 @@ dataSubmitBtn.addEventListener('click', async () => {
     } catch (error) {
         console.error('Fehler beim Senden der Dateien:', error);
     } finally {
-        // Setze den Button-Text und den Ladeindikator zurück
+        // Change button styling back
         dataSubmitBtn.textContent = 'Submit';
         dataSubmitBtn.disabled = false;
         dataSubmitBtn.classList.add('hover:bg-blue-600');
@@ -457,9 +500,10 @@ dataSubmitBtn.addEventListener('click', async () => {
 ///
 
 
-
+//This function creates the signal checkboxes. Each signal gets One Checkbox to be enabled and then 3 checkboxes for
+// front, trans and sag
 function createSignalCheckboxes(jsonData) {
-    const container = document.getElementById('signal-checkbox-container'); // Replace with the actual container element ID
+    const container = document.getElementById('signal-checkbox-container'); 
 
     // Parse the JSON data
     const data = jsonData;
@@ -483,7 +527,7 @@ function createSignalCheckboxes(jsonData) {
             enabledCheckbox.type = 'checkbox';
             enabledCheckbox.name = key;
             enabledCheckbox.checked = checkboxData.enabled;
-            // Add other attributes and event listeners as needed
+            
             checkboxContainer.appendChild(enabledCheckbox);
 
             // Create label for checkbox
@@ -515,21 +559,18 @@ function createSignalCheckboxes(jsonData) {
 
 
 
-    // Create checkboxes for power values (similar to angle/moment values)
 
-    // Add any additional elements or styling as needed
 }
 
-// Call the function with the received JSON data
 
-
+// this function cretes checkboxes out of all the attributes received from the backend
 function createAttributeCheckboxes(jsonData) {
-    const container = document.getElementById('attribute-checkbox-container'); // Replace with the actual container element ID
+    const container = document.getElementById('attribute-checkbox-container'); 
 
     // Parse the JSON data
     const data = jsonData;
 
-    // Create checkboxes for angle/moment values
+    // Create checkboxes 
     for (const element in data) {
 
 
@@ -551,7 +592,7 @@ function createAttributeCheckboxes(jsonData) {
         const attributeCheckbox = document.createElement('input');
         attributeCheckbox.type = 'checkbox';
         attributeCheckbox.name = data[element];
-        // Add other attributes and event listeners as needed
+        
         checkboxContainer.appendChild(attributeCheckbox);
 
 
@@ -572,20 +613,13 @@ function createAttributeCheckboxes(jsonData) {
 
 
 
-
+// Adding an event listener to send the selected presets or cehcked boxes to the backend. 
 document.addEventListener("DOMContentLoaded", function () {
 
 
     sendButton.addEventListener("click", async () => {
         const selectedPreset = presetDropdown.value;
-        /* 
         
-        TESTBLOCK FOR SIGNALS JSON
-        WORKS
-        
-        TODO: convert the presets into JS
-        
-        */
 
         const preset = getSignalJSON();
 
@@ -609,38 +643,6 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             console.error("Fehler1 beim Senden der Option ans Backend:", error);
         }
-
-
-
-        /* 
-        END OF TESTBLOCK
-        
-        */
-
-
-
-
-        /* const question = JSON.stringify({ preset: selectedPreset });
-        console.log(question);
-
-        try {
-            const response = await fetch("/signals", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: question,
-            });
-
-            if (response.ok) {
-                console.log("Option erfolgreich ans Backend gesendet.");
-                console.log(await response.json());
-            } else {
-                console.error("Fehler beim Senden der Option ans Backend:", response.statusText);
-            }
-        } catch (error) {
-            console.error("Fehler1 beim Senden der Option ans Backend:", error);
-        } */
     });
 });
 
@@ -648,8 +650,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 // function to get the signal JSON
-
-
 const getSignalJSON = () => {
 
     const container = document.getElementById('signal-checkbox-container');
@@ -671,6 +671,9 @@ const getSignalJSON = () => {
             const signalBoxesContainer = subContainer.querySelector('.signalboxes-container');
             const signalBoxes = signalBoxesContainer.querySelectorAll('input[type="checkbox"]');
 
+
+            // This part exists because the presets.JSON uses the numbers 1,3,5 to identify 
+            //if either sag, trans or front was selcted
             signalBoxes.forEach((signalBox, index) => {
                 if (signalBox.checked) {
                     checkedColumns.push(index + index + 1);
@@ -697,37 +700,6 @@ const getSignalJSON = () => {
 
 
 //turning presets into checkboxes
-
-function convertPresetToCheckboxes(preset) {
-
-    const container = document.getElementById('signal-checkbox-container');
-    const subContainer = container.querySelectorAll('.checkbox-subcontainer');
-    //iterate through the subcontainers
-    subContainer.forEach((subContainer) => {
-        //get the checkbox
-        const checkbox = subContainer.querySelector('input[type="checkbox"]');
-        checkbox.checked = false
-        //check if the checkbox is checked
-        const checkboxName = checkbox.name;
-
-        const matchingKey = Object.keys(preset['signals']).find(key => preset['signals'][key] === checkboxName);
-
-        if (matchingKey) {
-            // matchingKey contains the key where the value matches checkboxName
-            console.log(`The checkbox name "${checkboxName}" exists in the key "${matchingKey}" in preset['signals'].`);
-            checkbox.checked = true
-
-            const signalBoxesContainer = subContainer.querySelector('.signalboxes-container');
-            const signalBoxes = signalBoxesContainer.querySelectorAll('input[type="checkbox"]');
-
-
-
-        }
-    });
-}
-
-
-
 function convertPresetToCheckboxes2(preset) {
     const container = document.getElementById('signal-checkbox-container');
     const subContainers = container.querySelectorAll('.checkbox-subcontainer');
@@ -753,7 +725,7 @@ function convertPresetToCheckboxes2(preset) {
 
             // Check the sub-checkboxes according to preset
             columnIndices.forEach(idx => {
-                const boxIndex = (idx - 1) / 2; // Convert your 3-based index to 0-based
+                const boxIndex = (idx - 1) / 2; // Convert the 3-based index to 0-based (Again, because of 1,3,5)
                 if (signalBoxes[boxIndex]) {
                     signalBoxes[boxIndex].checked = true;
                 }
@@ -768,7 +740,7 @@ function convertPresetToCheckboxes2(preset) {
 
 
 
-
+// Gets the names of all checked attributes in a list. Returns the list
 function getCheckedAttributes() {
     const container = document.getElementById('attribute-checkbox-container')
 
@@ -792,7 +764,7 @@ function getCheckedAttributes() {
 
 
 
-
+//This function gets a list for each index that has the attribute which is checked in the attributes section
 function getSelectedDatapoints() {
     return new Promise((resolve, reject) => {
         const checkedAttributes = getCheckedAttributes();
@@ -839,20 +811,21 @@ function getSelectedDatapoints() {
 
 When an attribute checkbox is selected, the data on chart should be updated instantly
 
-for that i get a list of indexes from getSelectedDatapoints, add an eventlistener to the checkboxes and update the chart where all z-values correspond to the ones in indexlist.
+for that i get a list of indexes from getSelectedDatapoints, add an eventlistener to the checkboxes and update the chart 
+where all z-values correspond to the ones in indexlist.
 
 */
 
 
 
-attributeContainer.addEventListener('change', async (e) => { // Add async keyword here
+attributeContainer.addEventListener('change', async (e) => { 
     if (e.target.type === 'checkbox') {
         try {
-            const indexList = await getSelectedDatapoints(); // Use await keyword here
+            const indexList = await getSelectedDatapoints(); 
 
             console.log(indexList);
 
-            const markerSizes = chart.w.config.series[0].data.map((point, index) => {
+            chart.w.config.series[0].data.map((point, index) => {
                 if (indexList.includes(point.z)) {
                     console.log(point);
                     console.log(index);
@@ -867,15 +840,18 @@ attributeContainer.addEventListener('change', async (e) => { // Add async keywor
             });
             console.log(discreteList);
 
+
+            //ApexCharts updateOptions method
             chart.updateOptions({
                 markers: {
-                    size: 7,
-                    discrete: [
+                    size: 4,
+                    discrete: 
                         discreteList
-                    ]
+                    
                 }
-            });
+            }, false, false, false);
 
+            // reset List of selected indexes
             discreteList = [];
 
 
@@ -892,7 +868,7 @@ function pushThisIndexAsDiscrete(index) {
         dataPointIndex: index,
         fillColor: "#0A0",
         strokeColor: "#FFF",
-        size: 7
+        size: 6
     }
 
     discreteList.push(discrete);
@@ -1054,6 +1030,7 @@ executeButton.addEventListener("click", async () => {
                         }
                     },
                     xaxis: {
+                        show: false,
                         tickAmount: 10,
                         labels: {
                             formatter: function (val) {
@@ -1066,15 +1043,8 @@ executeButton.addEventListener("click", async () => {
                         tickAmount: 7
                     },
                     markers: {
-                        size: 8,
-                        colors: ['#2E93fA'],
-                        discrete: [{
-                            seriesIndex: 0,
-                            dataPointIndex: 1,
-                            fillColor: "#0A0",
-                            strokeColor: "#FFF",
-                            size: 7
-                        }]
+                        size: 4,
+                        colors: ['#6dabf2'],
                     }
                 };
 
@@ -1186,12 +1156,3 @@ function tsneapex2() {
 }
 
 
-
-
-const signalCheckboxes = () => {
-
-
-
-
-
-}

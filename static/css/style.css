@@ -568,6 +568,10 @@ video {
   }
 }
 
+.sticky {
+  position: sticky;
+}
+
 .-mb-px {
   margin-bottom: -1px;
 }
