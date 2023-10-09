@@ -10,17 +10,21 @@ def getAttributes(metadata):
 
     returns:
     int_columns (list): list of column names where the datatype is int64.
-    string_columns (list): list with two strings 'Geschl' and 'Grobkategorie' if they exist
+    unique_values (dict): dictionary where keys are column names and values are lists of unique values in those columns
     """
 
     # Select integer columns
     int_columns = [col for col in metadata.columns if metadata[col].dtype == 'int64']
+
+    # Select columns with specific names
     string_columns = [col for col in metadata.columns if col in ['Geschl', 'Grobkategorie']]
 
-    # Further filter columns if necessary, based on domain knowledge or other criteria
-    # selected_attributes = [col for col in int_columns if your_criteria(col)]
+    unique_values = {col: metadata[col].unique().tolist() for col in string_columns}
 
-    return int_columns, string_columns
+
+
+
+    return int_columns, unique_values, string_columns
 
 
 def getOnlySelectedData(ids, metadata):
@@ -40,8 +44,9 @@ def getOnlySelectedData(ids, metadata):
     selected_ids_set = set(ids)
 
     #get attribute name list from metadata
-    attribute_names = getAttributes(metadata)
+    int_attribute_names, _, str_attribute_names = getAttributes(metadata)
 
+    attribute_names = int_attribute_names + str_attribute_names
     # Filter rows: Keep only rows where 'DBId' matches one of the selected IDs
     filtered_rows = metadata[metadata['DBId'].isin(selected_ids_set)]
 

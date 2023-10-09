@@ -228,115 +228,133 @@ const test_data =
     }
 }
 
-const testAttributes = [
-    "Vorname",
-    "NMP",
-    "NMP_Hemi_re",
-    "NMP_Hemi_li",
-    "Klumpfu__re",
-    "Klumpfu__li",
-    "Torsion_Allg_re",
-    "Torsion_Allg_li",
-    "Torsion_OS_innen_re",
-    "Torsion_OS_au_en_re",
-    "Torsion_OS_innen_li",
-    "Torsion_OS_au_en_li",
-    "Torsion_US_innen_re",
-    "Torsion_US_au_en_re",
-    "Torsion_US_innen_li",
-    "Torsion_US_au_en_li",
-    "Varus_OS_re",
-    "Varus_OS_li",
-    "Varus_US_re",
-    "Varus_US_li",
-    "Varus_Allg_re",
-    "Varus_Allg_li",
-    "Valgus_OS_re",
-    "Valgus_OS_li",
-    "Valgus_US_re",
-    "Valgus_US_li",
-    "Valgus_Allg_re",
-    "Valgus_Allg_li",
-    "Valgus_li",
-    "Valgus_re",
-    "Varus_li",
-    "Varus_re",
-    "Front_Mix_li",
-    "Front_Mix_re",
-    "GA_Valgus_re",
-    "GA_Valgus_li",
-    "GA_Varus_re",
-    "GA_Varus_li",
-    "Plattfuss_re",
-    "Plattfuss_li",
-    "Sprungelenksproblem_re",
-    "Sprungelenksproblem_li",
-    "Knieproblem_re",
-    "Knieproblem_li",
-    "H_ftproblem_re",
-    "H_ftproblem_li",
-    "Wirbels_ulenproblem_re",
-    "Wirbels_ulenproblem_li",
-    "NORM0_7_habituell",
-    "NORM0_7_langsam",
-    "NORM0_7_schnell",
-    "NORM8_20_habituell",
-    "NORM8_20_langsam",
-    "NORM8_20_schnell",
-    "NORM21_30_habituell",
-    "NORM21_30_langsam",
-    "NORM21_30_schnell",
-    "Dateng_teFrontalAusreichend_re",
-    "Dateng_teFrontalAusreichend_li",
-    "Alter0_7",
-    "Alter8_20",
-    "Alter21_30",
-    "Alter31_",
-    "CT_OS_au_en_re",
-    "CT_OS_au_en_li",
-    "CT_OS_innen_re",
-    "CT_OS_innen_li",
-    "CT_US_au_en_re",
-    "CT_US_au_en_li",
-    "CT_US_innen_re",
-    "CT_US_innen_li",
-    "GA_OS_au_en_re",
-    "GA_OS_au_en_li",
-    "GA_OS_innen_re",
-    "GA_OS_innen_li",
-    "GA_US_au_en_re",
-    "GA_US_au_en_li",
-    "GA_US_innen_re",
-    "GA_US_innen_li",
-    "GA_OS_au_en_1STD_re",
-    "GA_OS_au_en_1STD_li",
-    "GA_OS_innen_1STD_re",
-    "GA_OS_innen_1STD_li",
-    "GA_US_au_en_1STD_re",
-    "GA_US_au_en_1STD_li",
-    "GA_US_innen_1STD_re",
-    "GA_US_innen_1STD_li",
-    "AltesLabor",
-    "NeuesLabor",
-    "Num_Matfiles",
-    "All_ersteMessung",
-    "All_VorOP",
-    "All_nOpPrae",
-    "All_OPInKG",
-    "All_GaVorOP",
-    "All_Pr_",
-    "All_Post",
-    "NumOP",
-    "UC1_GaVorOP",
-    "UC1_betroffen_RE",
-    "UC1_betroffen_LI",
-    "HTEP_pre",
-    "HTEP_pre_RE",
-    "HTEP_pre_LI",
-    "NMPII",
-    "Hilfsmittel",
-    "DBId"
-]
+const testAttributes = {
+    "int_attributes": [
+        "Vorname",
+        "NMP",
+        "NMP_Hemi_re",
+        "NMP_Hemi_li",
+        "Klumpfu__re",
+        "Klumpfu__li",
+        "Torsion_Allg_re",
+        "Torsion_Allg_li",
+        "Torsion_OS_innen_re",
+        "Torsion_OS_au_en_re",
+        "Torsion_OS_innen_li",
+        "Torsion_OS_au_en_li",
+        "Torsion_US_innen_re",
+        "Torsion_US_au_en_re",
+        "Torsion_US_innen_li",
+        "Torsion_US_au_en_li",
+        "Varus_OS_re",
+        "Varus_OS_li",
+        "Varus_US_re",
+        "Varus_US_li",
+        "Varus_Allg_re",
+        "Varus_Allg_li",
+        "Valgus_OS_re",
+        "Valgus_OS_li",
+        "Valgus_US_re",
+        "Valgus_US_li",
+        "Valgus_Allg_re",
+        "Valgus_Allg_li",
+        "Valgus_li",
+        "Valgus_re",
+        "Varus_li",
+        "Varus_re",
+        "Front_Mix_li",
+        "Front_Mix_re",
+        "GA_Valgus_re",
+        "GA_Valgus_li",
+        "GA_Varus_re",
+        "GA_Varus_li",
+        "Plattfuss_re",
+        "Plattfuss_li",
+        "Sprungelenksproblem_re",
+        "Sprungelenksproblem_li",
+        "Knieproblem_re",
+        "Knieproblem_li",
+        "H_ftproblem_re",
+        "H_ftproblem_li",
+        "Wirbels_ulenproblem_re",
+        "Wirbels_ulenproblem_li",
+        "NORM0_7_habituell",
+        "NORM0_7_langsam",
+        "NORM0_7_schnell",
+        "NORM8_20_habituell",
+        "NORM8_20_langsam",
+        "NORM8_20_schnell",
+        "NORM21_30_habituell",
+        "NORM21_30_langsam",
+        "NORM21_30_schnell",
+        "Dateng_teFrontalAusreichend_re",
+        "Dateng_teFrontalAusreichend_li",
+        "Alter0_7",
+        "Alter8_20",
+        "Alter21_30",
+        "Alter31_",
+        "CT_OS_au_en_re",
+        "CT_OS_au_en_li",
+        "CT_OS_innen_re",
+        "CT_OS_innen_li",
+        "CT_US_au_en_re",
+        "CT_US_au_en_li",
+        "CT_US_innen_re",
+        "CT_US_innen_li",
+        "GA_OS_au_en_re",
+        "GA_OS_au_en_li",
+        "GA_OS_innen_re",
+        "GA_OS_innen_li",
+        "GA_US_au_en_re",
+        "GA_US_au_en_li",
+        "GA_US_innen_re",
+        "GA_US_innen_li",
+        "GA_OS_au_en_1STD_re",
+        "GA_OS_au_en_1STD_li",
+        "GA_OS_innen_1STD_re",
+        "GA_OS_innen_1STD_li",
+        "GA_US_au_en_1STD_re",
+        "GA_US_au_en_1STD_li",
+        "GA_US_innen_1STD_re",
+        "GA_US_innen_1STD_li",
+        "AltesLabor",
+        "NeuesLabor",
+        "Num_Matfiles",
+        "All_ersteMessung",
+        "All_VorOP",
+        "All_nOpPrae",
+        "All_OPInKG",
+        "All_GaVorOP",
+        "All_Pr_",
+        "All_Post",
+        "NumOP",
+        "UC1_GaVorOP",
+        "UC1_betroffen_RE",
+        "UC1_betroffen_LI",
+        "HTEP_pre",
+        "HTEP_pre_RE",
+        "HTEP_pre_LI",
+        "NMPII",
+        "Hilfsmittel",
+        "DBId"
+    ],
+    "string_attributes": {
+        "Geschl": [
+            "weiblich",
+            "maennlich"
+        ],
+        "Grobkategorie": [
+            "Achsfehlstellung",
+            "ICP",
+            "Klumpfuss",
+            "Plattfuss",
+            "Sonstiges",
+            "SPG-TEP",
+            "Kreuzband",
+            "K-TEP"
+        ]
+    }
+}
 
 /* TEST OBJEKT ENDE */
 
@@ -406,7 +424,7 @@ var discreteList = [];
 
 
 
- 
+
 /* 
 
 Data input section
@@ -463,7 +481,7 @@ dataSubmitBtn.addEventListener('click', async () => {
             checkBoxData = data.response.checkboxes;
             console.log(checkBoxData);
 
-            attributes = data.response.attributes.int_attributes
+            attributes = data.response.attributes
             console.log(attributes)
 
             // Erstelle die Checkboxen
@@ -503,7 +521,7 @@ dataSubmitBtn.addEventListener('click', async () => {
 //This function creates the signal checkboxes. Each signal gets One Checkbox to be enabled and then 3 checkboxes for
 // front, trans and sag
 function createSignalCheckboxes(jsonData) {
-    const container = document.getElementById('signal-checkbox-container'); 
+    const container = document.getElementById('signal-checkbox-container');
 
     // Parse the JSON data
     const data = jsonData;
@@ -527,7 +545,7 @@ function createSignalCheckboxes(jsonData) {
             enabledCheckbox.type = 'checkbox';
             enabledCheckbox.name = key;
             enabledCheckbox.checked = checkboxData.enabled;
-            
+
             checkboxContainer.appendChild(enabledCheckbox);
 
             // Create label for checkbox
@@ -565,62 +583,40 @@ function createSignalCheckboxes(jsonData) {
 
 // this function cretes checkboxes out of all the attributes received from the backend
 function createAttributeCheckboxes(jsonData) {
-    const container = document.getElementById('attribute-checkbox-container'); 
+    const container = document.getElementById('attribute-checkbox-container');
 
     // Parse the JSON data
     const int_data = jsonData.int_attributes;
-    const string_data =jsonData.string_attributes;
+    const string_data = jsonData.string_attributes;
 
-    for (const element in string_data) {
+    for (const category in string_data) {
+        console.log(category)
 
-        if(element === 'Geschl'){
+        for (const key in string_data[category]) {
+            console.log(category[key])
 
-        const checkboxContainer = document.createElement('div');
-        checkboxContainer.classList.add('flex');
-        checkboxContainer.classList.add('justify-between');
-        checkboxContainer.classList.add('attributes-checkbox-subcontainer');
+            const checkboxContainer = document.createElement('div');
+            checkboxContainer.classList.add('flex');
+            checkboxContainer.classList.add('justify-between');
+            checkboxContainer.classList.add('attributes-checkbox-subcontainer');
 
-        // Create label for checkbox
-        const boxesLabel = document.createElement('label');
-        boxesLabel.textContent = 'Männlich';
-        boxesLabel.classList.add('dark:text-white')
-        checkboxContainer.appendChild(boxesLabel);
+            // Create label for checkbox
+            const boxesLabel = document.createElement('label');
+            boxesLabel.textContent = string_data[category][key];
+            boxesLabel.classList.add('dark:text-white')
+            checkboxContainer.appendChild(boxesLabel);
 
-        // Create checkbox
-        const attributeCheckbox = document.createElement('input');
-        attributeCheckbox.type = 'checkbox';
-        attributeCheckbox.name = data[element] + '-männlich';
-        
-        checkboxContainer.appendChild(attributeCheckbox);
+            // Create checkbox
+            const attributeCheckbox = document.createElement('input');
+            attributeCheckbox.type = 'checkbox';
+            attributeCheckbox.name = string_data[category] + string_data[category][key];
 
-        // Add the checkbox container to the main container
-        container.appendChild(checkboxContainer);
+            checkboxContainer.appendChild(attributeCheckbox);
 
+            // Add the checkbox container to the main container
+            container.appendChild(checkboxContainer);
 
-
-        // make counterpart
-        const checkboxContainer2 = document.createElement('div');
-        checkboxContainer2.classList.add('flex');
-        checkboxContainer2.classList.add('justify-between');
-        checkboxContainer2.classList.add('attributes-checkbox-subcontainer');
-
-        // Create label for checkbox
-        const boxesLabel2 = document.createElement('label');
-        boxesLabel2.textContent = 'Weiblich';
-        boxesLabel2.classList.add('dark:text-white')
-        checkboxContainer2.appendChild(boxesLabel2);
-
-        // Create checkbox
-        const attributeCheckbox2= document.createElement('input');
-        attributeCheckbox2.type = 'checkbox';
-        attributeCheckbox2.name = data[element] + '-weiblich';
-        
-        checkboxContainer2.appendChild(attributeCheckbox2);
-
-        // Add the checkbox container to the main container
-        container.appendChild(checkboxContainer2);
-
-        } else if (element === 'Grobkategorie')
+        }
 
 
     }
@@ -629,31 +625,32 @@ function createAttributeCheckboxes(jsonData) {
     // Create checkboxes 
     for (const element in int_data) {
 
+        // Filtering specific unnecessary attributes. (IDK how to dynamicly do that ?)
+        if (int_data[element] !== 'Vorname' && int_data[element] !== 'DBId' && int_data[element] !== 'Num_Matfiles') {
+            const checkboxContainer = document.createElement('div');
+            checkboxContainer.classList.add('flex');
+            checkboxContainer.classList.add('justify-between');
+            checkboxContainer.classList.add('attributes-checkbox-subcontainer');
 
 
-        const checkboxContainer = document.createElement('div');
-        checkboxContainer.classList.add('flex');
-        checkboxContainer.classList.add('justify-between');
-        checkboxContainer.classList.add('attributes-checkbox-subcontainer');
+
+            // Create label for checkbox
+            const boxesLabel = document.createElement('label');
+            boxesLabel.textContent = int_data[element];
+            boxesLabel.classList.add('dark:text-white')
+            checkboxContainer.appendChild(boxesLabel);
+
+            // Create checkbox
+            const attributeCheckbox = document.createElement('input');
+            attributeCheckbox.type = 'checkbox';
+            attributeCheckbox.name = int_data[element];
+
+            checkboxContainer.appendChild(attributeCheckbox);
 
 
-
-        // Create label for checkbox
-        const boxesLabel = document.createElement('label');
-        boxesLabel.textContent = data[element];
-        boxesLabel.classList.add('dark:text-white')
-        checkboxContainer.appendChild(boxesLabel);
-
-        // Create checkbox
-        const attributeCheckbox = document.createElement('input');
-        attributeCheckbox.type = 'checkbox';
-        attributeCheckbox.name = data[element];
-        
-        checkboxContainer.appendChild(attributeCheckbox);
-
-
-        // Add the checkbox container to the main container
-        container.appendChild(checkboxContainer);
+            // Add the checkbox container to the main container
+            container.appendChild(checkboxContainer);
+        }
 
 
     }
@@ -675,7 +672,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     sendButton.addEventListener("click", async () => {
         const selectedPreset = presetDropdown.value;
-        
+
 
         const preset = getSignalJSON();
 
@@ -840,6 +837,7 @@ function getSelectedDatapoints() {
 
                 data.data.forEach(row => {
                     indexlist.forEach(index => {
+                        console.log(index);
                         if (row[index] === 1 && !dbidlist.includes(row[dbid])) {
                             dbidlist.push(row[dbid]);
                         }
@@ -874,10 +872,10 @@ where all z-values correspond to the ones in indexlist.
 
 
 
-attributeContainer.addEventListener('change', async (e) => { 
+attributeContainer.addEventListener('change', async (e) => {
     if (e.target.type === 'checkbox') {
         try {
-            const indexList = await getSelectedDatapoints(); 
+            const indexList = await getSelectedDatapoints();
 
             console.log(indexList);
 
@@ -899,9 +897,9 @@ attributeContainer.addEventListener('change', async (e) => {
             chart.updateOptions({
                 markers: {
                     size: 4,
-                    discrete: 
+                    discrete:
                         discreteList
-                    
+
                 }
             }, false, false, false);
 

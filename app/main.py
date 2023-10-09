@@ -60,7 +60,7 @@ async def upload_files(data_file: UploadFile = File(...), metadata_file: UploadF
 
         try:
             temp_checkboxes = create_checkboxes_signals(array_data)
-            int_attributes, string_attributes = getAttributes(meta_data)
+            int_attributes, string_attributes, _ = getAttributes(meta_data)
             attributes = {'int_attributes': int_attributes, 'string_attributes': string_attributes}
         except Exception as e:
             print("Fehler beim Erstellen der Checkboxen:", e)
