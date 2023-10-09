@@ -463,7 +463,7 @@ dataSubmitBtn.addEventListener('click', async () => {
             checkBoxData = data.response.checkboxes;
             console.log(checkBoxData);
 
-            attributes = data.response.attributes
+            attributes = data.response.attributes.int_attributes
             console.log(attributes)
 
             // Erstelle die Checkboxen
@@ -568,10 +568,66 @@ function createAttributeCheckboxes(jsonData) {
     const container = document.getElementById('attribute-checkbox-container'); 
 
     // Parse the JSON data
-    const data = jsonData;
+    const int_data = jsonData.int_attributes;
+    const string_data =jsonData.string_attributes;
+
+    for (const element in string_data) {
+
+        if(element === 'Geschl'){
+
+        const checkboxContainer = document.createElement('div');
+        checkboxContainer.classList.add('flex');
+        checkboxContainer.classList.add('justify-between');
+        checkboxContainer.classList.add('attributes-checkbox-subcontainer');
+
+        // Create label for checkbox
+        const boxesLabel = document.createElement('label');
+        boxesLabel.textContent = 'Männlich';
+        boxesLabel.classList.add('dark:text-white')
+        checkboxContainer.appendChild(boxesLabel);
+
+        // Create checkbox
+        const attributeCheckbox = document.createElement('input');
+        attributeCheckbox.type = 'checkbox';
+        attributeCheckbox.name = data[element] + '-männlich';
+        
+        checkboxContainer.appendChild(attributeCheckbox);
+
+        // Add the checkbox container to the main container
+        container.appendChild(checkboxContainer);
+
+
+
+        // make counterpart
+        const checkboxContainer2 = document.createElement('div');
+        checkboxContainer2.classList.add('flex');
+        checkboxContainer2.classList.add('justify-between');
+        checkboxContainer2.classList.add('attributes-checkbox-subcontainer');
+
+        // Create label for checkbox
+        const boxesLabel2 = document.createElement('label');
+        boxesLabel2.textContent = 'Weiblich';
+        boxesLabel2.classList.add('dark:text-white')
+        checkboxContainer2.appendChild(boxesLabel2);
+
+        // Create checkbox
+        const attributeCheckbox2= document.createElement('input');
+        attributeCheckbox2.type = 'checkbox';
+        attributeCheckbox2.name = data[element] + '-weiblich';
+        
+        checkboxContainer2.appendChild(attributeCheckbox2);
+
+        // Add the checkbox container to the main container
+        container.appendChild(checkboxContainer2);
+
+        } else if (element === 'Grobkategorie')
+
+
+    }
+
 
     // Create checkboxes 
-    for (const element in data) {
+    for (const element in int_data) {
 
 
 
@@ -827,8 +883,6 @@ attributeContainer.addEventListener('change', async (e) => {
 
             chart.w.config.series[0].data.map((point, index) => {
                 if (indexList.includes(point.z)) {
-                    console.log(point);
-                    console.log(index);
 
                     pushThisIndexAsDiscrete(index);
 

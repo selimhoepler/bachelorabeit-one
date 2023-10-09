@@ -2,14 +2,25 @@ import pandas as pd
 
 
 def getAttributes(metadata):
+    """ 
+    Gets column names from 'metadata' which are useable for attribute selection
+
+    Parameters:
+    metadata (pd.DataFrame): The metadata DataFrame.
+
+    returns:
+    int_columns (list): list of column names where the datatype is int64.
+    string_columns (list): list with two strings 'Geschl' and 'Grobkategorie' if they exist
+    """
 
     # Select integer columns
     int_columns = [col for col in metadata.columns if metadata[col].dtype == 'int64']
+    string_columns = [col for col in metadata.columns if col in ['Geschl', 'Grobkategorie']]
 
     # Further filter columns if necessary, based on domain knowledge or other criteria
     # selected_attributes = [col for col in int_columns if your_criteria(col)]
 
-    return int_columns
+    return int_columns, string_columns
 
 
 def getOnlySelectedData(ids, metadata):
@@ -23,7 +34,7 @@ def getOnlySelectedData(ids, metadata):
     
 
     Returns:
-    pd.DataFrame: Filtered metadata DataFrame.
+    filtered_data (pd.DataFrame): Filtered metadata DataFrame.
     """
     # Convert selected_ids to set for faster lookup
     selected_ids_set = set(ids)
