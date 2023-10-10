@@ -9,3 +9,34 @@ body, html {
 .justify-between {
     justify-content: space-between;
 }
+
+/* .pb-4 {
+ padding-bottom: 4px !important; 
+} */
+
+
+
+/* ------------------------ SCrollbar ------------------------ */
+
+::-webkit-scrollbar {
+    width: 12px;
+
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 3px;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #4e302267;
+    border-radius: 10px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4e3022b7;
+  }

@@ -4,6 +4,8 @@
 
 
 /* TEST OBJEKT */
+
+
 const test_data =
 {
     "angle_moment_values": {
@@ -590,15 +592,14 @@ function createAttributeCheckboxes(jsonData) {
     const string_data = jsonData.string_attributes;
 
     for (const category in string_data) {
-        console.log(category)
 
         for (const key in string_data[category]) {
-            console.log(category[key])
+
 
             const checkboxContainer = document.createElement('div');
             checkboxContainer.classList.add('flex');
             checkboxContainer.classList.add('justify-between');
-            checkboxContainer.classList.add('attributes-checkbox-subcontainer');
+            checkboxContainer.classList.add('string-attributes-checkbox-subcontainer');
 
             // Create label for checkbox
             const boxesLabel = document.createElement('label');
@@ -609,7 +610,7 @@ function createAttributeCheckboxes(jsonData) {
             // Create checkbox
             const attributeCheckbox = document.createElement('input');
             attributeCheckbox.type = 'checkbox';
-            attributeCheckbox.name = string_data[category] + string_data[category][key];
+            attributeCheckbox.name = string_data[category][key];
 
             checkboxContainer.appendChild(attributeCheckbox);
 
@@ -832,16 +833,29 @@ function getSelectedDatapoints() {
                 data.columns.forEach(element => {
                     if (checkedAttributes.includes(element)) {
                         indexlist.push(data.columns.indexOf(element));
+
                     }
                 });
+                console.log(indexlist);
+
+                var tester = 0;
 
                 data.data.forEach(row => {
                     indexlist.forEach(index => {
-                        console.log(index);
                         if (row[index] === 1 && !dbidlist.includes(row[dbid])) {
                             dbidlist.push(row[dbid]);
                         }
                     });
+
+
+                    row.forEach(value => {
+                        checkedAttributes.forEach(attribute => {
+                            if (value === attribute && !dbidlist.includes(row[dbid])) {
+                                dbidlist.push(row[dbid]);
+                            }
+                        })
+                    });
+
                 });
 
                 resolve(dbidlist); // Resolve the promise with dbidlist
@@ -985,6 +999,101 @@ presetDropdown.addEventListener("change", async () => {
 
 
 
+//
+// InfoBox Section
+//
+
+
+
+function dataPointSelected(index) {
+    console.log('datapoint selected', index);
+    console.log(chart.w.config.series[0].data[index]);
+
+    // The id or z-value of the selected datapoint,
+    const dataPointDBID = chart.w.config.series[0].data[index].z
+
+    // A list that will be containing the attributes correspondant to the selected datapoint
+    var attributeNameList = []
+
+    
+
+
+    fetch('/static/json/attributes.json')
+        .then(response => response.json())
+        .then(data => {
+            const dbidIndex = data.columns.indexOf("DBId");
+
+            data.data.forEach(row => {
+                if (row[dbidIndex] === dataPointDBID){
+                    console.log(row);
+
+
+
+                    row.forEach((col, colindex) => { 
+                        if (col === 1) {
+                            console.log(colindex);
+                            attributeNameList.push(data.columns[colindex]);
+                        } else if (typeof col === 'string') {
+                            attributeNameList.push(col);
+                        }
+                    });
+
+                    // hier muss ich dann die daten verwerten iwie idk
+                    console.log(attributeNameList);
+                }
+            });
+
+
+
+
+        });
+
+
+
+}
+
+
+
+
+function dataCloudSelected(){
+    // display a chart of info of the selected cloud
+    // get all 1s of the datapoints in cloud
+    // add number of 1s of attributes
+    // chart the distribution of attributes as a pie chart or something
+
+
+
+
+    const selectedDatapoints = getSelectedDatapoints();
+
+
+    fetch('/static/json/attributes.json')
+        .then(response => response.json())
+        .then(data => {
+            const dbidIndex = data.columns.indexOf("DBId");
+
+            data.data.forEach(row => {
+                if (selectedDatapoints.includes(row[dbidIndex])){
+                    console.log(row);
+
+
+
+                }
+            });
+
+
+
+
+        });
+
+
+
+}
+
+
+
+
+
 
 
 
@@ -1079,6 +1188,11 @@ executeButton.addEventListener("click", async () => {
                         zoom: {
                             enabled: true,
                             type: 'xy'
+                        },
+                        events: {
+                            markerClick: function (event, chartContext, { seriesIndex, dataPointIndex, config }) {
+                                dataPointSelected(dataPointIndex);
+                            },
                         }
                     },
                     xaxis: {
