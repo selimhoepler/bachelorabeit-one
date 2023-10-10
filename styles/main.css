@@ -40,3 +40,15 @@ body, html {
   ::-webkit-scrollbar-thumb:hover {
     background: #4e3022b7;
   }
+
+
+  /* -----------------info boxes ------------------- */
+
+  .general-info-box {
+    padding: 3px;
+    background-color: rgb(199, 220, 234);
+    border-style: solid;
+    border-width: 0px 0px 0px 2px;
+    border-color: blue;
+    border-radius: 5px 5px 5px 5px;
+}

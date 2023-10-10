@@ -1013,7 +1013,8 @@ function dataPointSelected(index) {
     const dataPointDBID = chart.w.config.series[0].data[index].z
 
     // A list that will be containing the attributes correspondant to the selected datapoint
-    var attributeNameList = []
+    var intAttributeNameList = []
+    var strAttributeNameList = []
 
     
 
@@ -1032,23 +1033,20 @@ function dataPointSelected(index) {
                     row.forEach((col, colindex) => { 
                         if (col === 1) {
                             console.log(colindex);
-                            attributeNameList.push(data.columns[colindex]);
+                            intAttributeNameList.push(data.columns[colindex]);
                         } else if (typeof col === 'string') {
-                            attributeNameList.push(col);
+                           strAttributeNameList.push(col);
                         }
                     });
 
                     // hier muss ich dann die daten verwerten iwie idk
-                    console.log(attributeNameList);
+                    console.log(intAttributeNameList, strAttributeNameList);
+
+                    displayInformation(intAttributeNameList, strAttributeNameList);
                 }
             });
 
-
-
-
         });
-
-
 
 }
 
@@ -1088,6 +1086,13 @@ function dataCloudSelected(){
 
 
 
+}
+
+
+
+
+function displayInformation(intAttributeNameList, strAttributeNameList) {
+    
 }
 
 
