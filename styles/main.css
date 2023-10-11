@@ -1,13 +1,22 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700');
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body, html {
     height:100%;
+    font-family: Poppins, sans-serif;
 }
 
 .justify-between {
     justify-content: space-between;
+
+}
+
+.justify-evenly {
+  justify-content: space-evenly;
 }
 
 /* .pb-4 {
@@ -51,4 +60,14 @@ body, html {
     border-width: 0px 0px 0px 2px;
     border-color: blue;
     border-radius: 5px 5px 5px 5px;
+}
+
+.attribute-info-box {
+  padding: 3px;
+  background-color: rgb(234, 199, 199);
+  border-style: solid;
+  border-width: 0px 0px 0px 2px;
+  border-color: red;
+  border-radius: 5px 5px 5px 5px;
+  margin: 5px;
 }

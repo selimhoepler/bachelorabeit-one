@@ -143,31 +143,30 @@
 
     </div>
 </div>
-<div class="container self-center flex h-screen w-full flex-col xl:flex-row overflow-auto">
+<div class="container self-center flex h-screen w-full flex-col xl:flex-row ">
     <div class=" md:h-full
      p-1 pt-4 w-full" id="yellowCont">
-        <div class="border-2 border-indigo-600 h-full w-full">
+        <div class="border-2 border-indigo-600 h-full w-full flex flex-col">
             <!-- <i class="fa-solid fa-chevron-down fa-2xl top-50 "></i> -->
-            <div class="w-3/5 h-full">
-                <div class="w-full h-1/6 bg-blue-400" id="info-header">
+            <div class="h-fit w-full">
+                <div class="w-full h-1/6 bg-blue-400 flex items-center justify-center" id="info-header">
                     <h2 class="">
                         DATAPOINT INFORMATION
                     </h2>
                 </div>
-                <div class="w-full flex h-1/6 flex-row justify-around content-around flex-wrap " id="general-info-container">
+                <div class="w-1/2 flex h-1/6 flex-row justify-around content-start flex-wrap m-1" id="general-info-container"></div>
 
-                    <div class="general-info-box h-1/2">
-                        <p> Männlich </p>
-                    </div>
+                <div class="w-full flex h-4/6 flex-row justify-center content-start flex-wrap m-1" id="attribute-info-container"></div>
 
-                    <div class="general-info-box h-1/2">
-                        <p> 17 Jahre </p>
-                    </div>
-
-                    <div class="general-info-box h-1/2">
-                        <p> Achsefehlstellung </p>
-                    </div>
-
+            
+            </div>
+            <div class="flex flex-col h-full w-full ">
+                <div class="w-full h-1/6 bg-red-400 flex items-center justify-center" id="info-header">
+                    <h2 class="">
+                        DATACLOUD INFORMATION
+                    </h2>
+                </div>
+                <div id="cloud-plot-container">
 
                 </div>
             </div>

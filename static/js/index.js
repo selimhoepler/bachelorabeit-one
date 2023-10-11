@@ -415,8 +415,10 @@ const modelsButton = document.getElementById("models-button");
 const executeButton = document.getElementById("execute-button");
 
 
-// var for the chart 
+// var for the charts 
 var chart;
+
+var infoChart;
 
 // helper for the chart updates
 var discreteList = [];
@@ -809,7 +811,7 @@ function getCheckedAttributes() {
 
 
 
-    console.log(checkedList)
+
 
     return checkedList
 }
@@ -836,7 +838,6 @@ function getSelectedDatapoints() {
 
                     }
                 });
-                console.log(indexlist);
 
                 var tester = 0;
 
@@ -891,7 +892,7 @@ attributeContainer.addEventListener('change', async (e) => {
         try {
             const indexList = await getSelectedDatapoints();
 
-            console.log(indexList);
+
 
             chart.w.config.series[0].data.map((point, index) => {
                 if (indexList.includes(point.z)) {
@@ -904,7 +905,6 @@ attributeContainer.addEventListener('change', async (e) => {
                     // Default size
                 }
             });
-            console.log(discreteList);
 
 
             //ApexCharts updateOptions method
@@ -919,6 +919,9 @@ attributeContainer.addEventListener('change', async (e) => {
 
             // reset List of selected indexes
             discreteList = [];
+
+            // trigger the dataCloud infoBox change
+            dataCloudSelected();
 
 
         } catch (error) {
@@ -1016,7 +1019,7 @@ function dataPointSelected(index) {
     var intAttributeNameList = []
     var strAttributeNameList = []
 
-    
+
 
 
     fetch('/static/json/attributes.json')
@@ -1025,17 +1028,17 @@ function dataPointSelected(index) {
             const dbidIndex = data.columns.indexOf("DBId");
 
             data.data.forEach(row => {
-                if (row[dbidIndex] === dataPointDBID){
+                if (row[dbidIndex] === dataPointDBID) {
                     console.log(row);
 
 
 
-                    row.forEach((col, colindex) => { 
+                    row.forEach((col, colindex) => {
                         if (col === 1) {
                             console.log(colindex);
                             intAttributeNameList.push(data.columns[colindex]);
                         } else if (typeof col === 'string') {
-                           strAttributeNameList.push(col);
+                            strAttributeNameList.push(col);
                         }
                     });
 
@@ -1053,36 +1056,82 @@ function dataPointSelected(index) {
 
 
 
-function dataCloudSelected(){
+async function dataCloudSelected() {
     // display a chart of info of the selected cloud
     // get all 1s of the datapoints in cloud
     // add number of 1s of attributes
     // chart the distribution of attributes as a pie chart or something
 
+    try {
+        const selectedDatapoints = await getSelectedDatapoints();
+
+        const response = await fetch('/static/json/attributes.json');
+        const data = await response.json();
+
+        const dbidIndex = data.columns.indexOf("DBId");
+
+        var attributeStatisticList = [];
+
+        data.data.forEach(row => {
+            if (selectedDatapoints.includes(row[dbidIndex])) {
+
+
+                row.forEach((attribute, index) => {
+                    if (attribute === 1) {
+                        attributeStatisticList.push(data.columns[index])
+                    }
+                    if (typeof attribute === 'string') {
+                        attributeStatisticList.push(attribute)
+                    }
+                })
 
 
 
-    const selectedDatapoints = getSelectedDatapoints();
 
-
-    fetch('/static/json/attributes.json')
-        .then(response => response.json())
-        .then(data => {
-            const dbidIndex = data.columns.indexOf("DBId");
-
-            data.data.forEach(row => {
-                if (selectedDatapoints.includes(row[dbidIndex])){
-                    console.log(row);
-
-
-
-                }
-            });
-
-
-
-
+            }
         });
+
+        displayCloudInformation(attributeStatisticList);
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+
+
+
+function displayInformation(intAttributeNameList, strAttributeNameList) {
+
+    const generalInfoContainer = document.getElementById('general-info-container');
+    const attributeInfoContainer = document.getElementById('attribute-info-container');
+
+    generalInfoContainer.innerHTML = '';
+    attributeInfoContainer.innerHTML = '';
+
+    strAttributeNameList.forEach(attribute => {
+        const generalInfoBox = document.createElement('div');
+        generalInfoBox.classList.add('general-info-box');
+
+        const newParagraph = document.createElement("p");
+        newParagraph.textContent = attribute;
+
+        generalInfoBox.appendChild(newParagraph);
+
+        generalInfoContainer.appendChild(generalInfoBox);
+    })
+
+    intAttributeNameList.forEach(attribute => {
+        const attributeInfoBox = document.createElement('div');
+        attributeInfoBox.classList.add('attribute-info-box');
+
+        const newParagraph = document.createElement("p");
+        newParagraph.textContent = attribute;
+
+        attributeInfoBox.appendChild(newParagraph);
+
+        attributeInfoContainer.appendChild(attributeInfoBox);
+    })
 
 
 
@@ -1090,9 +1139,56 @@ function dataCloudSelected(){
 
 
 
+function displayCloudInformation(attributeList) {
+    // Preprocess data to get frequency of each unique value
+    const frequency = attributeList.reduce((acc, val) => {
+        acc[val] = (acc[val] || 0) + 1;
+        return acc;
+    }, {});
 
-function displayInformation(intAttributeNameList, strAttributeNameList) {
-    
+    // Create an array of objects from frequency
+    const dataArray = Object.entries(frequency).map(([category, value]) => ({ category, value }));
+
+    // Sort dataArray by value in descending order
+    dataArray.sort((a, b) => b.value - a.value);
+
+    // Extract sorted categories and data
+    const categories = dataArray.map(obj => obj.category);
+    const data = dataArray.map(obj => obj.value);
+
+    console.log(data);
+
+    // Check if infoChart exists
+    if (infoChart) {
+        // Update the existing chart with new data
+        infoChart.updateOptions({
+            series: [{
+                data: data
+            }],
+            xaxis: {
+                categories: categories
+            }
+        });
+
+
+    } else {
+        // Create chart
+        var options = {
+            chart: {
+                height: '100%',
+                type: 'bar' // or 'pie', 'donut', 'treemap', etc.
+            },
+            series: [{
+                data: data
+            }],
+            xaxis: {
+                categories: categories
+            }
+        };
+
+        infoChart = new ApexCharts(document.querySelector("#cloud-plot-container"), options);
+        infoChart.render();
+    }
 }
 
 
