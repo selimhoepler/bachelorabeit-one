@@ -19,6 +19,14 @@ body, html {
   justify-content: space-evenly;
 }
 
+
+.content-center {
+  align-content: center;
+}
+
+.m-10 {
+  margin: 15px;
+}
 /* .pb-4 {
  padding-bottom: 4px !important; 
 } */

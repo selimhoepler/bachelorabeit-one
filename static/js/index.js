@@ -1046,6 +1046,11 @@ function dataPointSelected(index) {
                     console.log(intAttributeNameList, strAttributeNameList);
 
                     displayInformation(intAttributeNameList, strAttributeNameList);
+
+
+                    const element = document.getElementById("yellowCont");
+                    //you can do it by jquery. no matter
+                    element.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
                 }
             });
 
