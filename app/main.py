@@ -15,6 +15,7 @@ import pprint
 from IPython.display import display as idisplay
 import json
 import numpy as np
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -22,6 +23,19 @@ app.mount('/static', StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory='templates')
 
 logging.basicConfig(filename='app_log.txt', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+
+#creating Tsne_Setting and UMAP_Setting as a pydantic BaseModel class
+class TsneSettings(BaseModel):
+    tsne_perplexity: int = 15
+    tsne_iterations: int = 3000
+    # tsne_seed: int = 1         # Dont think that should be customizable
+    d_metric: str = "euclidean"
+
+
+
+
+
 
 @app.get('/', response_class=HTMLResponse)
 async def home(request: Request):
@@ -124,16 +138,18 @@ async def process_signals(preset_data: dict):  #OPTIONAL: Subsampling_rate: int,
         return JSONResponse(content={"error": str(e)}, status_code=500)
     
 
-@app.get("/models")
-async def create_model(
-    tsne_iterations: int = 3000,
-    tsne_perplexity: int = 15,
-    tsne_seed: int = 1,
-):
+@app.post("/models")
+async def create_model(tsne_settings: TsneSettings):
+    tsne_perplexity = tsne_settings.tsne_perplexity
+    tsne_iterations = tsne_settings.tsne_iterations
+    # tsne_seed = tsne_settings.tsne_seed
+    d_metric = tsne_settings.d_metric
+
+
     try:
         model_type = "tsne"
         models = {}
-        d_metric = "euclidean"
+       
 
         if model_type == "tsne":
             models = create_models.tsne(
@@ -141,7 +157,7 @@ async def create_model(
                 begin_p=tsne_perplexity,
                 end_p=tsne_perplexity + 1,
                 step_p=1,
-                seed=tsne_seed,
+                # seed=tsne_seed,
                 metric=str(d_metric).lower(),
             )
 

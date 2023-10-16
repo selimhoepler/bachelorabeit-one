@@ -95,7 +95,7 @@ def execute(
     results = {}
     single_result = defaultdict(dict)
     model_key_list = []
-    test = pd.DataFrame()
+
     for key in data_dict:
         print(f'[INFO] Key: {key}')
         for interval in interval_list:

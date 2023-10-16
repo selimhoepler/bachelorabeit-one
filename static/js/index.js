@@ -898,6 +898,8 @@ attributeContainer.addEventListener('change', async (e) => {
 
 
 
+
+
             chart.w.config.series[0].data.map((point, index) => {
                 if (indexList.includes(point.z)) {
 
@@ -918,11 +920,19 @@ attributeContainer.addEventListener('change', async (e) => {
                     discrete:
                         discreteList
 
-                }
+                },
+                chart: {
+                    animations: {
+                        enabled: false,
+                    },
+                },
             }, false, false, false);
 
             // reset List of selected indexes
             discreteList = [];
+
+
+
 
             // trigger the dataCloud infoBox change
             dataCloudSelected();
@@ -1212,16 +1222,19 @@ function displayCloudInformation(attributeList) {
 //
 
 modelsButton.addEventListener("click", async () => {
-
-    const perplexity = perplexitySlider.value
+    const perplexity = parseInt(perplexitySlider.value, 10);
 
     console.log(perplexity);
 
-
-
     try {
         const response = await fetch("/models", {
-            method: "GET",
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tsne_perplexity: perplexity
+            })
         });
 
         if (response.ok) {
@@ -1234,6 +1247,7 @@ modelsButton.addEventListener("click", async () => {
         console.error("Fehler1 beim Senden der Modelle ans Backend:", error);
     }
 });
+
 
 
 
@@ -1290,10 +1304,17 @@ executeButton.addEventListener("click", async () => {
 
             if (chart) {
                 // Update the existing chart with new data
-                chart.updateSeries([{
-                    name: "Sample B",
-                    data: series
-                }]);
+                chart.updateOptions({
+                    chart: {
+                        animations: {
+                            enabled: true,
+                        },
+                    },
+                    series: [{
+                        name: "Sample B",
+                        data: series
+                    }]
+                });
             } else {
 
                 var options = {
@@ -1304,6 +1325,9 @@ executeButton.addEventListener("click", async () => {
                     chart: {
                         height: '100%',
                         type: 'scatter',
+                        animations: {
+                            enabled: true,
+                        },
                         zoom: {
                             enabled: true,
                             type: 'xy'
