@@ -371,6 +371,8 @@ const testButton3 = document.getElementById('test-button3');
 
 
 
+
+
 testButton.addEventListener("click", () => {
     console.log(test_data);
     createSignalCheckboxes(test_data);
@@ -404,6 +406,8 @@ testButton3.addEventListener("click", () => {
 const dataSubmitBtn = document.getElementById('data-submit-button');
 const inputFilesData = document.getElementById('input-data');
 const inputFilesMetadata = document.getElementById('input-metadata');
+
+const perplexitySlider = document.getElementById('tsne-perplexity-slider')
 
 const presetDropdown = document.getElementById("preset-dropdown");
 const sendButton = document.getElementById("send-button");
@@ -1208,6 +1212,13 @@ function displayCloudInformation(attributeList) {
 //
 
 modelsButton.addEventListener("click", async () => {
+
+    const perplexity = perplexitySlider.value
+
+    console.log(perplexity);
+
+
+
     try {
         const response = await fetch("/models", {
             method: "GET",
@@ -1223,6 +1234,8 @@ modelsButton.addEventListener("click", async () => {
         console.error("Fehler1 beim Senden der Modelle ans Backend:", error);
     }
 });
+
+
 
 
 //
