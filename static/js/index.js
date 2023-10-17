@@ -1380,7 +1380,7 @@ executeButton.addEventListener("click", async () => {
 // Chart section
 //
 
-function tsneapex2() {
+/* function tsneapex2() {
 
     function getGradientColor(value) {
         const minValue = -10; // Mindestwert der dritten Dimension
@@ -1462,6 +1462,32 @@ function tsneapex2() {
         .catch(error => {
             console.log('Fehler beim Abrufen der Daten:', error);
         });
+} */
+
+
+
+
+
+
+
+
+//
+//// minor functions
+//
+
+
+
+
+
+//get the value of sliders
+window.onload = function() {
+    
+    const output = document.getElementById("rangevalue1");
+    output.value = perplexitySlider.value; // set the initial value on page load
+
+    perplexitySlider.oninput = function() {
+        output.value = this.value; // update the value when the slider changes
+    }
 }
 
 

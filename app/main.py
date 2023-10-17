@@ -61,7 +61,7 @@ async def upload_files(data_file: UploadFile = File(...), metadata_file: UploadF
         
         # Hier kannst du die verarbeiteten Daten speichern oder verwenden
         
-        #safe the data in pickle files
+        #save the data in pickle files
         try:
             helpers.savePickle(array_data, meta_data, side)
             message = "Daten erfolgreich eingelesen"
