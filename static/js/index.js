@@ -427,6 +427,8 @@ var infoChart;
 // helper for the chart updates
 var discreteList = [];
 
+var firstClick = true;
+
 
 
 
@@ -1062,9 +1064,14 @@ function dataPointSelected(index) {
                     displayInformation(intAttributeNameList, strAttributeNameList);
 
 
+                    if (firstClick){
+
                     const element = document.getElementById("yellowCont");
                     //you can do it by jquery. no matter
                     element.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+
+                    firstClick = false;
+                    }
                 }
             });
 
