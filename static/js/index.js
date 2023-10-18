@@ -364,7 +364,7 @@ const testAttributes = {
 
 const testButton = document.getElementById("test-button");
 const testButton2 = document.getElementById("test-button2");
-const testButton3 = document.getElementById('test-button3');
+
 
 
 
@@ -383,11 +383,6 @@ testButton2.addEventListener("click", () => {
     createAttributeCheckboxes(testAttributes);
 });
 
-testButton3.addEventListener("click", () => {
-
-    getCheckedAttributes();
-    getSelectedDatapoints();
-});
 
 
 
@@ -407,14 +402,15 @@ const dataSubmitBtn = document.getElementById('data-submit-button');
 const inputFilesData = document.getElementById('input-data');
 const inputFilesMetadata = document.getElementById('input-metadata');
 
-const perplexitySlider = document.getElementById('tsne-perplexity-slider')
+const perplexitySlider = document.getElementById('tsne-perplexity-slider');
+const iterationsSlider = document.getElementById('tsne-iterations-slider');
 
 const presetDropdown = document.getElementById("preset-dropdown");
 const sendButton = document.getElementById("send-button");
 
 const attributeContainer = document.getElementById("attribute-checkbox-container")
 
-const modelsButton = document.getElementById("models-button");
+const modelsButton = document.getElementById("models-button-tsne");
 
 const executeButton = document.getElementById("execute-button");
 
@@ -951,7 +947,7 @@ function pushThisIndexAsDiscrete(index) {
     const discrete = {
         seriesIndex: 0,
         dataPointIndex: index,
-        fillColor: "#0A0",
+        fillColor: "#C73E1D",
         strokeColor: "#FFF",
         size: 6
     }
@@ -1230,6 +1226,7 @@ function displayCloudInformation(attributeList) {
 
 modelsButton.addEventListener("click", async () => {
     const perplexity = parseInt(perplexitySlider.value, 10);
+    const iterations = parseInt(iterationsSlider.value, 10)
 
     console.log(perplexity);
 
@@ -1240,7 +1237,8 @@ modelsButton.addEventListener("click", async () => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                tsne_perplexity: perplexity
+                tsne_perplexity: perplexity,
+                tsne_iterations: iterations
             })
         });
 
@@ -1360,7 +1358,7 @@ executeButton.addEventListener("click", async () => {
                     },
                     markers: {
                         size: 4,
-                        colors: ['#6dabf2'],
+                        colors: ['#6366F1'],
                     }
                 };
 
@@ -1489,12 +1487,20 @@ executeButton.addEventListener("click", async () => {
 //get the value of sliders
 window.onload = function() {
     
-    const output = document.getElementById("rangevalue1");
-    output.value = perplexitySlider.value; // set the initial value on page load
+    const tsnePerplexityOutput = document.getElementById("tsne-perplexity-value");
+    const tsneIterationsOutput = document.getElementById('tsne-iterations-value');
+
+    tsnePerplexityOutput.value = perplexitySlider.value; // set the initial value on page load
+    tsneIterationsOutput.value = iterationsSlider.value;
 
     perplexitySlider.oninput = function() {
-        output.value = this.value; // update the value when the slider changes
+        tsnePerplexityOutput.value = this.value; // update the value when the slider changes
     }
+
+    iterationsSlider.oninput = function() {
+        tsneIterationsOutput.value = this.value; // update the value when the slider changes
+    }
+
 }
 
 

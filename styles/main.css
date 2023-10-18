@@ -49,13 +49,13 @@ body, html {
   
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: #4e302267;
+    background: #B4B5F8;
     border-radius: 10px;
   }
   
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-    background: #4e3022b7;
+    background: #aaabfc;
   }
 
 

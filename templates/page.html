@@ -14,7 +14,7 @@
         <h1 class="text-center font-medium text-5xl mt-0 mb-2 text-blue-600 w-max">Todo app</h1>
       </div> -->
         <div class="h-2/5 p-1" id="greenCont">
-            <div class="border-2 border-indigo-600 h-full overflow-auto">
+            <div class="border-2 border-indigo-200 h-full overflow-auto p-2">
                 <form class="flex flex-col items-start p-1" id="data-upload-form">
                     <label class="block w-full text-sm font-medium text-gray-900 dark:text-white" for="input-data">
                         Input data
@@ -30,24 +30,88 @@
                     </label>
 
                     <button type="button" id="data-submit-button"
-                        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                        class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">
                         <span class="text-sm">Submit</span>
                     </button>
                 </form>
 
-                <form class="flex flex-col items-start p-1" id="data-upload-form">
-                    <input class="range" type="range" min="5" max="100" value="10" step="5"
-                        id="tsne-perplexity-slider" />
-                    <output id="rangevalue1"></output>
 
 
-                    <button id="models-button" type="button"
-                        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Create Models</button>
-                </form>
+                <!-- Config card -->
+
+                <div
+                    class="w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                    <div class="sm:hidden">
+                        <label for="tabs" class="sr-only">Select tab</label>
+                        <select id="tabs"
+                            class="bg-gray-50 border-0 border-b border-gray-200 text-gray-900 text-sm rounded-t-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option>T-SNE</option>
+                            <option>UMAP</option>
+                        </select>
+                    </div>
+                    <ul class="hidden text-sm font-medium text-center text-gray-500 divide-x divide-gray-200 rounded-lg sm:flex dark:divide-gray-600 dark:text-gray-400"
+                        id="fullWidthTab" data-tabs-toggle="#fullWidthTabContent" role="tablist">
+                        <li class="w-full">
+                            <button id="tsne-tab" data-tabs-target="#tsne" type="button" role="tab" aria-controls="tsne"
+                                aria-selected="true"
+                                class="inline-block w-full p-4 rounded-tl-lg bg-gray-50 hover:bg-gray-100 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600">T-SNE</button>
+                        </li>
+                        <li class="w-full">
+                            <button id="umap-tab" data-tabs-target="#umap" type="button" role="tab" aria-controls="umap"
+                                aria-selected="false"
+                                class="inline-block w-full p-4 bg-gray-50 hover:bg-gray-100 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600">UMAP</button>
+                        </li>
+
+                    </ul>
+                    <div id="fullWidthTabContent" class="border-t border-gray-200 dark:border-gray-600">
+                        <div class="hidden p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800" id="tsne" role="tabpanel"
+                            aria-labelledby="tsne-tab">
+                            <!-- CONFIG T-SNE -->
+
+                            <form class="flex flex-row flex-wrap items-start p-1" id="tsne-config-form">
+                                <div class="flex w-1/2 flex-col">
+                                    <label for="tsne-perplexity-slider">T-Sne perplexity</label>
+                                    <input class="range" type="range" min="5" max="100" value="10" step="5"
+                                        id="tsne-perplexity-slider" />
+                                    <output id="tsne-perplexity-value"></output>
+                                </div>
+
+                                <div class="flex w-1/2 flex-col">
+                                    <label for="tsne-iterations-slider">T-Sne iterations</label>
+                                    <input class="range" type="range" min="500" max="5000" value="10" step="500"
+                                        id="tsne-iterations-slider" />
+                                    <output id="tsne-iterations-value"></output>
+                                </div>
+
+                                <button id="models-button-tsne" value="tsne" type="button"
+                                    class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">Create
+                                    Models</button>
+                            </form>
+                        </div>
+                        <div class="hidden p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800" id="umap" role="tabpanel"
+                            aria-labelledby="umap-tab">
+                            <!-- CONFIG UMAP -->
+                            <form class="flex flex-col items-start p-1" id="umap-config-form">
+                                <input class="range" type="range" min="5" max="100" value="10" step="5"
+                                    id="umap-perplexity-slider" />
+                                <output id="rangevalue1"></output>
+
+
+                                <button id="models-button" type="button"
+                                    class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">Create
+                                    Models</button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
+
+
             </div>
         </div>
         <div class="h-3/5 p-1 pb-4 " id="redCont">
-            <div class="border-2 border-indigo-600 h-full overflow-auto">
+            <div class="border-2 border-indigo-200 h-full overflow-auto">
 
 
 
@@ -90,7 +154,7 @@
                                 </select>
                             </label>
                             <button id="send-button" type="button"
-                                class="px-4 py-2 bg-blue-500 text-white rounded ">Send</button>
+                                class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 ">Send</button>
                         </form>
 
 
@@ -117,7 +181,7 @@
 
 
                 <button id="execute-button" type="button"
-                    class="px-4 py-2 bg-red-600 text-white rounded hover:bg-blue-600">Execute Models</button>
+                    class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Execute Models</button>
 
 
 
@@ -127,14 +191,12 @@
     </div>
     <div class="container h-full w-full flex flex-col md:flex-row xl:flex-col xl:w-2/3 ">
         <div class="h-full  p-1 pb-4 " id="blueCont">
-            <div class="border-2 h-full border-indigo-600" id="plot-container">
+            <div class="border-2 h-full border-indigo-200" id="plot-container">
                 <button id="test-button" type="button"
-                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">TEST</button>
-            <button id="test-button2" type="button"
-                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">TEST</button>
+                    class="px-4 py-2 bg-blue-300 text-white rounded hover:bg-blue-200">TEST</button>
+                <button id="test-button2" type="button"
+                    class="px-4 py-2 bg-blue-300 text-white rounded hover:bg-blue-200">TEST</button>
 
-            <button id="test-button3" type="button"
-                class="px-4 py-2 bg-yellow-200 text-white rounded hover:bg-blue-600">TEST</button>
 
             </div>
 
@@ -146,7 +208,7 @@
 <div class="container self-center flex h-screen w-full flex-col xl:flex-row ">
     <div class=" md:h-full
      p-1 pt-4 w-full" id="yellowCont">
-        <div class="border-2 border-indigo-600 h-full w-full flex flex-col">
+        <div class="border-2 border-indigo-200 h-full w-full flex flex-col">
             <!-- <i class="fa-solid fa-chevron-down fa-2xl top-50 "></i> -->
             <div class="h-fit w-full">
                 <div class="w-full h-28 bg-blue-400 flex items-center justify-center" id="info-header">
@@ -154,11 +216,13 @@
                         DATAPOINT INFORMATION
                     </h2>
                 </div>
-                <div class="w-full flex h-1/6 flex-row justify-around content-center flex-wrap m-1" id="general-info-container"></div>
+                <div class="w-full flex h-1/6 flex-row justify-around content-center flex-wrap m-1"
+                    id="general-info-container"></div>
 
-                <div class="w-full flex h-4/6 flex-row justify-center content-start flex-wrap m-1" id="attribute-info-container"></div>
+                <div class="w-full flex h-4/6 flex-row justify-center content-start flex-wrap m-1"
+                    id="attribute-info-container"></div>
 
-            
+
             </div>
             <div class="flex flex-col h-full w-full ">
                 <div class="w-full h-28 bg-red-400 flex items-center justify-center" id="info-header">
