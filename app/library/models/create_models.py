@@ -32,6 +32,7 @@ def tsne(
     
     print(f'[GENERATE][ENTER] tsne()') 
     print(f'[INFO] perplexity values: begin_p: {begin_p}, end_p: {end_p}')
+    print(f'[INFO] TSNE iterations: {iter}')
     print(f'[INFO] threads: {n_threads}')
 
     if 'euclidean' not in metric:

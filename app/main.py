@@ -107,19 +107,22 @@ async def process_signals(preset_data: dict):  #OPTIONAL: Subsampling_rate: int,
            # signal_data, signal_names = signal_data_selection(int(selected_preset), array_data, side)
            # trying with JSON Preset
 
-           signal_data, signal_names = signal_data_selection(preset_data, array_data, side)
+           signal_data = signal_data_selection(preset_data, array_data, side)
         
         except Exception as e:
             print("Fehler beim Laden der Signale:", e)
             logging.exception(e)
             return JSONResponse(content={"error": str(e)}, status_code=500)
-        #print type of signal_data, signal_names
+        #print type of signal_data
         print(type(signal_data)) #dict
-        print(type(signal_names)) #list
+
+        tester = [col for col in signal_data.columns if col == "Age"]
+        print (tester)
+        
 
         try:
             helpers.saveDict(signal_data, "signal_data")
-            helpers.saveDict(signal_names, "signal_names")
+
 
         except Exception as e:
             print("Fehler beim Speichern der Signale:", e)
@@ -135,6 +138,7 @@ async def process_signals(preset_data: dict):  #OPTIONAL: Subsampling_rate: int,
         return JSONResponse(content={"error": str(ve)}, status_code=400)
 
     except Exception as e:
+        logging.exception(e)
         return JSONResponse(content={"error": str(e)}, status_code=500)
     
 
@@ -221,6 +225,8 @@ async def execute_all_models(
 
             z_data = list(data_ids)
 
+            y_data = getAge()
+
             results = []
             for i in range(len(signal_tsne_data)):
                 results.append({"x": x_data[i], "y": y_data[i], "z": z_data[i]})
@@ -238,7 +244,7 @@ async def execute_all_models(
 
             
 
-            helpers.saveJSON(filtered_data)
+            helpers.saveJSON(filtered_data, "attributes.json")
 
 
 

@@ -1,4 +1,5 @@
 import pandas as pd
+from app.library.helpers.helpers import loadPickle
 
 
 def getAttributes(metadata):
@@ -54,5 +55,12 @@ def getOnlySelectedData(ids, metadata):
     filtered_data = filtered_rows[attribute_names]
 
     return filtered_data
+
+
+def getAge():
+
+    data,_,_ = loadPickle()
+
+    
 
 

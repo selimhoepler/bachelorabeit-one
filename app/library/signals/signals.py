@@ -39,26 +39,6 @@ class Signals():
 
 
 
-
-
-
-def get_signals():   # return list signal_names of json signals, the keys of the array
-
-    signals = Signals()
-    signal_dict = signals.defaults
-    signal_names = list(signal_dict.keys())
-
-
-    return signal_dict, signal_names
-
-def get_preset(signal_dict, signal_names, test_key:int):
-    preset_val = signal_names[test_key]
-    preset = signal_dict[preset_val]
-    print(f"This is the preset: {preset}")
-    return preset
-
-
-
 def signal_data_selection(
  #       signal_int:int, 
         preset,
@@ -76,7 +56,7 @@ def signal_data_selection(
 
     """
 
-    signal_dict, signal_names = get_signals()
+
     #test_preset = get_preset(signal_dict, signal_names, signal_int)   # gets me a preset with an int, probably not used later
 
     
@@ -92,7 +72,7 @@ def signal_data_selection(
         do_norm=None,
         legs=legs
         )
-    return signal_data_selection, signal_names
+    return signal_data_selection
 
 
 
