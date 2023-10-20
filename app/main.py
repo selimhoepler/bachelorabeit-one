@@ -8,7 +8,7 @@ from .library.ingest.ingest import *
 import tempfile
 from .library.helpers import helpers as helpers
 from .library.signals.signals import signal_data_selection, create_checkboxes_signals
-from .library.attributes.attributes import getAttributes, getOnlySelectedData
+from .library.attributes.attributes import getAttributes, getOnlySelectedData, getAge
 import logging
 from .library.models import create_models, execute_models 
 import pprint
@@ -57,13 +57,13 @@ async def upload_files(data_file: UploadFile = File(...), metadata_file: UploadF
             metadata_tempfile_path = metadata_tempfile.name
         
         # Einlesen der Dateien mit load_matlab_csv
-        array_data, meta_data, side = get_datas(data_tempfile_path, metadata_tempfile_path)
+        array_data, meta_data, side, scalar_data = get_datas(data_tempfile_path, metadata_tempfile_path)
         
         # Hier kannst du die verarbeiteten Daten speichern oder verwenden
         
         #save the data in pickle files
         try:
-            helpers.savePickle(array_data, meta_data, side)
+            helpers.savePickle(array_data, meta_data, side, scalar_data)
             message = "Daten erfolgreich eingelesen"
 
             # TODO: delete temp files after everythings been done (?)
@@ -97,7 +97,7 @@ async def process_signals(preset_data: dict):  #OPTIONAL: Subsampling_rate: int,
         print(f"this is selected preset as dict: {preset_data}")
         
         try:
-            array_data, meta_data, side = helpers.loadPickle()
+            array_data, _, side, _ = helpers.loadPickle()
         
         except Exception as e:
             print("Fehler beim Laden der Daten:", e)
@@ -116,8 +116,8 @@ async def process_signals(preset_data: dict):  #OPTIONAL: Subsampling_rate: int,
         #print type of signal_data
         print(type(signal_data)) #dict
 
-        tester = [col for col in signal_data.columns if col == "Age"]
-        print (tester)
+        # tester = [col for col in signal_data.columns if col == "Age"]
+        # print (tester)
         
 
         try:
@@ -192,6 +192,11 @@ async def execute_all_models(
     try:
         models = helpers.loadDict("models")
         signal_data = helpers.loadDict("signal_data")
+        _,metadata ,_ ,scalar_data = helpers.loadPickle()
+
+        print(type(metadata))
+        print(type(scalar_data))
+
         tsne_results, model_keys = execute_models.execute(
         models,
         signal_data,
@@ -225,7 +230,8 @@ async def execute_all_models(
 
             z_data = list(data_ids)
 
-            y_data = getAge()
+            age_data = getAge(z_data, scalar_data)
+            print(f'[INFO] AGE DATA: {age_data}')
 
             results = []
             for i in range(len(signal_tsne_data)):
@@ -238,7 +244,7 @@ async def execute_all_models(
 
 
 
-            _, metadata, _ = helpers.loadPickle()
+            
 
             filtered_data = getOnlySelectedData(z_data, metadata)
 

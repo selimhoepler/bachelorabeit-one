@@ -6,7 +6,7 @@ import json, numpy as np
 pickle_path = r"app\temp"
 json_path = r"static\json"
 
-def savePickle(array_data, meta_data, side):
+def savePickle(array_data, meta_data, side, scalar_data):
     # Speichern der DataFrames
 
 
@@ -20,6 +20,8 @@ def savePickle(array_data, meta_data, side):
     with open(os.path.join(pickle_path, "side.pkl"), "wb") as f:
         pickle.dump(side, f)
 
+    with open(os.path.join(pickle_path, "scalar_data.pkl"), "wb") as f:
+        pickle.dump(side, f)
     
 def loadPickle():
     # load the data from the pickle files and return them
@@ -31,8 +33,11 @@ def loadPickle():
 
     with open(os.path.join(pickle_path, "side.pkl"), "rb") as f:
         side = pickle.load(f)
+    
+    with open(os.path.join(pickle_path, "scalar_data.pkl"), "rb") as f:
+        scalar_data = pickle.load(f)
 
-    return array_data, meta_data, side
+    return array_data, meta_data, side, scalar_data
 
 def saveDict(dict, name:str):
     with open(os.path.join(pickle_path, f"{name}.pkl"), "wb") as f:

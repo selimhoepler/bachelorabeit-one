@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from icecream import ic
 # from app.library.data import prepare as prepare
 
 
@@ -149,10 +150,12 @@ def get_datas(data_filename, metadata_filename):
     # Alle anderen Spalten
     other_columns = [
         col for col in first_row.index if col not in re_columns and col not in li_columns]
+    
+    ic(scalar_data)
 
 
 
-    return array_data, meta_data, side
+    return array_data, meta_data, side, scalar_data
 
 
 def save_data_to_file(data, filename):
