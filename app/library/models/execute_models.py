@@ -1,7 +1,8 @@
 import datetime
 import time
 import pandas as pd
-from collections import defaultdict 
+import numpy as np
+from collections import defaultdict, Counter 
 
 
 def models_execute(
@@ -55,7 +56,7 @@ def models_execute(
             data=models[model_key]['tsne_data'],
             index=models[model_key]['ids'],
             columns=['dim1', 'dim2'])
-        test = models[model_key]['tsne'] #test_code test = pandas dataframe
+        
         model_keys.append(model_key)
         print(f'[INFO] Model keys: {model_keys}')
     # print model timings
@@ -116,8 +117,13 @@ def execute(
                 results.update(single_result)
                 model_key_list.append(model_key)
                 #test_code
-            else:
-                results.update(
+            elif 'individual' in leg:
+                print(f'INDIVIDUALLEG')
+                print (f"length of left affected: {len(data_dict[key][str(interval)]['left_affected'])}")
+                print (f"length of left affected(dropna): {len(data_dict[key][str(interval)]['left_affected'].dropna())}")
+                print (f"length of right affected: {len(data_dict[key][str(interval)]['right_affected'])}")
+                print (f"length of right affected(dropna): {len(data_dict[key][str(interval)]['right_affected'].dropna())}")
+                single_result, model_key = (
                     models_execute(
                         models,
                         pd.concat(
@@ -132,6 +138,36 @@ def execute(
                         multivar_labels=multivar_labels
                         )
                     )
+                results.update(single_result)
+                model_key_list.append(model_key)
+
+            else:
+                print(f'ALL')
+                print (f"length of left affected(dropna): {len(data_dict[key][str(interval)]['left_affected'].dropna())}")
+                print (f"length of right affected(dropna): {len(data_dict[key][str(interval)]['right_affected'].dropna())}")
+                print (f"length of both affected(dropna): {len(data_dict[key][str(interval)]['both_affected'].dropna())}")
+                print (f"{data_dict[key][str(interval)]}")
+
+
+                
+                single_result, model_key = (
+                    models_execute(
+                        models,
+                        pd.concat(
+                            [
+                                data_dict[key][str(interval)]['left_affected'].dropna(),
+                                data_dict[key][str(interval)]['right_affected'].dropna(),
+                                data_dict[key][str(interval)]['both_affected'].dropna()
+                            ],verify_integrity=True
+                        ),
+                        '_{:02d}'.format(interval),
+                        key,
+                        do_print=False,
+                        multivar_labels=multivar_labels
+                        )
+                    )
+                results.update(single_result)
+                model_key_list.append(model_key)
                 
     print(f'[GENERATE][EXIT] execute()') 
     return results, model_key_list

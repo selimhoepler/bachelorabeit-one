@@ -8,13 +8,13 @@
 
 {% block page_content %}
 <!-- TODO: make container overflow with scrollbar-->
-<div class="container self-center flex h-screen w-full flex-col xl:flex-row ">
-    <div class="container h-full w-full flex flex-col md:flex-row xl:flex-col xl:w-1/3">
+<div class="container self-center flex h-screen w-full flex-col md:flex-row ">
+    <div class="container h-full flex flex-col  w-1/3 pb-3">
         <!-- <div class="textContainer w-max">
         <h1 class="text-center font-medium text-5xl mt-0 mb-2 text-blue-600 w-max">Todo app</h1>
       </div> -->
         <div class="h-2/5 p-1" id="greenCont">
-            <div class="border-2 border-indigo-200 h-full overflow-auto p-2">
+            <div class="border-2 border-indigo-200 h-full overflow-auto p-2 myContainer">
                 <form class="flex flex-col items-start p-1" id="data-upload-form">
                     <label class="block w-full text-sm font-medium text-gray-900 dark:text-white" for="input-data">
                         Input data
@@ -45,7 +45,7 @@
                         <label for="tabs" class="sr-only">Select tab</label>
                         <select id="tabs"
                             class="bg-gray-50 border-0 border-b border-gray-200 text-gray-900 text-sm rounded-t-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                            <option>T-SNE</option>
+                            <option>t-SNE</option>
                             <option>UMAP</option>
                         </select>
                     </div>
@@ -69,37 +69,74 @@
                             <!-- CONFIG T-SNE -->
 
                             <form class="flex flex-row flex-wrap items-start p-1" id="tsne-config-form">
+                                <div class="w-full">
+                                    <div class="w-fit cursor-pointer infobox flex " data-modal-target="model-modal"
+                                        data-modal-toggle="model-modal">
+                                        <svg style="margin-right: 10px;" width="25px" height="25px" fill="#000000"
+                                            version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                                            xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 45.999 45.999"
+                                            xml:space="preserve">
+                                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                            </g>
+                                            <g id="SVGRepo_iconCarrier">
+                                                <g>
+                                                    <g>
+                                                        <path
+                                                            d="M39.264,6.736c-8.982-8.981-23.545-8.982-32.528,0c-8.982,8.982-8.981,23.545,0,32.528c8.982,8.98,23.545,8.981,32.528,0 C48.245,30.281,48.244,15.719,39.264,6.736z M25.999,33c0,1.657-1.343,3-3,3s-3-1.343-3-3V21c0-1.657,1.343-3,3-3s3,1.343,3,3V33z M22.946,15.872c-1.728,0-2.88-1.224-2.844-2.735c-0.036-1.584,1.116-2.771,2.879-2.771c1.764,0,2.88,1.188,2.917,2.771 C25.897,14.648,24.746,15.872,22.946,15.872z">
+                                                        </path>
+                                                    </g>
+                                                </g>
+                                            </g>
+                                        </svg>
+                                        information
+
+                                    </div>
+                                </div>
                                 <div class="flex w-1/2 flex-col">
-                                    <label for="tsne-perplexity-slider">T-Sne perplexity</label>
+                                    <label for="tsne-perplexity-slider">t-SNE perplexity</label>
                                     <input class="range" type="range" min="5" max="100" value="10" step="5"
                                         id="tsne-perplexity-slider" />
                                     <output id="tsne-perplexity-value"></output>
                                 </div>
 
                                 <div class="flex w-1/2 flex-col">
-                                    <label for="tsne-iterations-slider">T-Sne iterations</label>
+                                    <label for="tsne-iterations-slider">t-SNE iterations</label>
                                     <input class="range" type="range" min="500" max="5000" value="10" step="500"
                                         id="tsne-iterations-slider" />
                                     <output id="tsne-iterations-value"></output>
                                 </div>
 
-                                <button id="models-button-tsne" value="tsne" type="button"
-                                    class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">Create
-                                    Models</button>
+                                <button id="models-button-tsne" value="tsne" type="button" value="tsne"
+                                    class="models-button px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">Create
+                                    t-SNE
+                                    Model</button>
                             </form>
                         </div>
                         <div class="hidden p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800" id="umap" role="tabpanel"
                             aria-labelledby="umap-tab">
                             <!-- CONFIG UMAP -->
-                            <form class="flex flex-col items-start p-1" id="umap-config-form">
-                                <input class="range" type="range" min="5" max="100" value="10" step="5"
-                                    id="umap-perplexity-slider" />
-                                <output id="rangevalue1"></output>
+                            <form class="flex flex-row flex-wrap items-start p-1" id="umap-config-form">
+                                <div class="flex w-1/2 flex-col">
+                                    <label for="umap-minDist-slider">UMAP min-dist</label>
+                                    <input class="range" type="range" min="0.05" max="0.5" value="0.1" step="0.05"
+                                        id="umap-minDist-slider" />
+                                    <output id="umap-minDist-value"></output>
+                                </div>
+
+                                <div class="flex w-1/2 flex-col">
+                                    <label for="umap-n-neighbors-slider">UMAP n_neighbors</label>
+                                    <input class="range" type="range" min="5" max="50" value="15" step="5"
+                                        id="umap-n-neighbors-slider" />
+                                    <output id="umap-n-neighbors-value"></output>
+                                </div>
 
 
-                                <button id="models-button" type="button"
-                                    class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">Create
-                                    Models</button>
+                                <button id="models-button" type="button" value="umap"
+                                    class="models-button px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">Create
+                                    UMAP
+                                    Model</button>
                             </form>
                         </div>
 
@@ -111,14 +148,15 @@
             </div>
         </div>
         <div class="h-3/5 p-1 pb-4 " id="redCont">
-            <div class="border-2 border-indigo-200 h-full overflow-auto">
+            <div
+                class="border-2 border-indigo-200 h-full overflow-auto myContainer opacity-30 pointer-events-none blurryCont">
 
 
 
-                <div class="mb-4 border-b border-gray-200 dark:border-gray-700 sticky">
+                <div class="mb-4 border-b border-gray-200 bg-white shadowy dark:border-gray-700 sticky top-0">
                     <ul class="flex -mb-px text-sm font-medium text-center sticky" id="myTab"
                         data-tabs-toggle="#myTabContent" role="tablist">
-                        <li class="w-full" role="presentation">
+                        <li class="w-full" style="border-right: solid 1px #e5e7eb" role="presentation">
                             <button class="inline-block p-4 border-b-2 rounded-t-lg" id="signals-tab"
                                 data-tabs-target="#signals" type="button" role="tab" aria-controls="signals"
                                 aria-selected="false">Signals</button>
@@ -134,15 +172,25 @@
                 </div>
                 <div id="myTabContent">
                     <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="signals" role="tabpanel"
-                        aria-labelledby="profile-tab">
+                        aria-labelledby="signals-tab">
+
+                        <div class="border-b w-full flex ">
+                            <div class="w-1/5"> enabled</div>
+                            <div class="w-4/5 flex justify-end">
+                                <div class=" text-xs"> sag | &ThinSpace;</div>
+                                <div class=" text-xs"> front | &ThinSpace;</div>
+                                <div class=" text-xs"> trans</div>
+                            </div>
+                        </div>
 
 
 
                         <div id="signal-checkbox-container" class="flex flex-col"> </div>
 
 
-                        <form id="preset-form" class="p-4"> <!-- Disable when data is not submitted-->
-                            <label class="block mb-2">
+                        <form id="preset-form" class="p-4 flex flex-wrap justify-center">
+                            <!-- Disable when data is not submitted-->
+                            <label class="block mb-2 w-full">
                                 <span class="text-gray-700">Select Presets:</span>
                                 <select id="preset-dropdown"
                                     class="mt-1 block w-full border border-gray-300 rounded py-2 px-3 focus:outline-none focus:ring focus:border-blue-300">
@@ -154,14 +202,47 @@
                                 </select>
                             </label>
                             <button id="send-button" type="button"
-                                class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 ">Send</button>
+                                class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 w-1/2">Send</button>
                         </form>
 
 
 
                     </div>
                     <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="attributes" role="tabpanel"
-                        aria-labelledby="dashboard-tab">
+                        aria-labelledby="attributes-tab">
+                        <div class="w-fit cursor-pointer infobox flex " data-modal-target="default-modal"
+                            data-modal-toggle="default-modal">
+                            <svg style="margin-right: 10px;" width="25px" height="25px" fill="#000000" version="1.1"
+                                id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 45.999 45.999"
+                                xml:space="preserve">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <g>
+                                        <g>
+                                            <path
+                                                d="M39.264,6.736c-8.982-8.981-23.545-8.982-32.528,0c-8.982,8.982-8.981,23.545,0,32.528c8.982,8.98,23.545,8.981,32.528,0 C48.245,30.281,48.244,15.719,39.264,6.736z M25.999,33c0,1.657-1.343,3-3,3s-3-1.343-3-3V21c0-1.657,1.343-3,3-3s3,1.343,3,3V33z M22.946,15.872c-1.728,0-2.88-1.224-2.844-2.735c-0.036-1.584,1.116-2.771,2.879-2.771c1.764,0,2.88,1.188,2.917,2.771 C25.897,14.648,24.746,15.872,22.946,15.872z">
+                                            </path>
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg>
+                            information
+
+                        </div>
+                        <div class="inline-flex rounded-md shadow-sm w-full mb-3" role="group">
+                            <button id="sumHighlightBtn" type="button"
+                                class="active w-1/2 px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-l-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                                Sum-Highlighting
+                            </button>
+
+                            <button id="intersectionHighlightBtn" type="button"
+                                class=" w-1/2 px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-r-md hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                                Intersection-Highlighting
+                            </button>
+                        </div>
+
                         <div id="attribute-checkbox-container" class="flex flex-col"> </div>
 
 
@@ -176,22 +257,57 @@
 
 
 
+                <div class="p-4 flex flex-wrap justify-center" id="execution-section">
+                    <label class="block mb-2 w-full">
+                        <span class="text-gray-700">Select affected legs:</span>
+<!--                         <div class="inline-flex rounded-md shadow-sm w-full mb-3" role="group">
 
 
+                            <button id="leg-btn-both" type="button"
+                                class="active w-1/3 px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-l-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                                Both affected
+                            </button>
 
+                            <button id="leg-btn-all" type="button"
+                            class=" w-1/3 px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900  hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                            All patients
+                            </button>
 
-                <button id="execute-button" type="button"
-                    class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Execute Models</button>
+                            <button id="leg-btn-individual" type="button"
+                                class=" w-1/3 px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-r-md hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                                Individual
+                            </button>
 
+                        </div> -->
+                        <div class="inline-flex rounded-md shadow-sm w-full mb-3" role="group">
 
+                          </div>
+                          <div class="inline-flex rounded-md shadow-sm w-full mb-3" role="group">
+                            <button id="leg-btn-both" type="button" class="active w-1/3 px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-s-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                                Both affected
+                            </button>
+                            <button id="leg-btn-all" type="button" class="w-1/3 px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border-t border-b border-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                                All patients
+                            </button>
+                            <button id="leg-btn-individual" type="button" class="w-1/3 px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-e-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700">
+                                Individual
+                            </button>
+                          </div>
+                    </label>
+
+                    <button id="execute-button" type="button"
+                        class="w-1/2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Execute Models</button>
+
+                </div>
 
             </div>
 
         </div>
     </div>
-    <div class="container h-full w-full flex flex-col md:flex-row xl:flex-col xl:w-2/3 ">
+    <div class="container h-full  flex flex-col w-2/3 pb-3 ">
         <div class="h-full  p-1 pb-4 " id="blueCont">
-            <div class="border-2 h-full border-indigo-200" id="plot-container">
+            <div class="border-2 h-full border-indigo-200 myContainer opacity-30 pointer-events-none blurryCont"
+                id="plot-container">
                 <button id="test-button" type="button"
                     class="px-4 py-2 bg-blue-300 text-white rounded hover:bg-blue-200">TEST</button>
                 <button id="test-button2" type="button"
@@ -205,13 +321,13 @@
 
     </div>
 </div>
-<div class="container self-center flex h-screen w-full flex-col xl:flex-row ">
-    <div class=" md:h-full
+<div class="container self-center flex h-screen w-full flex-col md:flex-row ">
+    <div class=" md:h-screen
      p-1 pt-4 w-full" id="yellowCont">
-        <div class="border-2 border-indigo-200 h-full w-full flex flex-col">
+        <div class="border-2 border-indigo-200 h-full w-full flex flex-col myContainer">
             <!-- <i class="fa-solid fa-chevron-down fa-2xl top-50 "></i> -->
-            <div class="h-fit w-full">
-                <div class="w-full h-28 bg-blue-400 flex items-center justify-center" id="info-header">
+            <div class="h-fit w-full mb-5">
+                <div class="w-full h-20 bg-blue-400 flex items-center justify-center" id="info-header">
                     <h2>
                         DATAPOINT INFORMATION
                     </h2>
@@ -225,7 +341,7 @@
 
             </div>
             <div class="flex flex-col h-full w-full ">
-                <div class="w-full h-28 bg-red-400 flex items-center justify-center" id="info-header">
+                <div class="w-full h-20 bg-red-400 flex items-center justify-center" id="info-header">
                     <h2>
                         DATACLOUD INFORMATION
                     </h2>
@@ -234,6 +350,131 @@
 
                 </div>
             </div>
+
+
+
+            <!--              
+            <div id="myModal" class="modal">
+
+              
+                <div class="modal-content">
+                  <span class="close">&times;</span>
+                  <p>Some text in the Modal..</p>
+                </div>
+              
+              </div> -->
+
+            <!-- Attribute Info modal -->
+            <div id="default-modal" tabindex="-1" aria-hidden="true"
+                class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                <div class="relative w-full max-w-2xl max-h-full">
+                    <!-- Modal content -->
+                    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                        <!-- Modal header -->
+                        <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                Attribute selection
+                            </h3>
+                            <button type="button"
+                                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                data-modal-hide="default-modal">
+                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 14 14">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                </svg>
+                                <span class="sr-only">Close modal</span>
+                            </button>
+                        </div>
+                        <!-- Modal body -->
+                        <div class="p-6 space-y-6">
+                            <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                In this section you can select specific attributes. Depending on if the datapoints in
+                                the scatterplot correspond
+                                to this attribute, they will be highlighted. You can switch between
+                                <strong>sum-highlighting</strong> and <strong>intersection-highlighting.</strong>
+                            </p>
+                            <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                <strong>sum-highlighting:</strong>
+                                By selecting one attribute, the corresponding datapoints will be highlighted <strong
+                                    class="text-[#D95F02]">red</strong>.
+                                When selecting another attribute, datapoints which correspond to only one of the
+                                selected, will either be colored <strong class="text-[#D95F02]">red</strong> or <strong
+                                    class="text-[#7570B3]">blue</strong>.
+                                When the datapoints correspond to both selected attributes, they will be highlighted
+                                <strong class="text-[#1B9E77]">green</strong>.
+                                <br>
+                                <strong>intersection-highlighting:</strong>
+                                With this mode activated, only the datapoints which correspond to <strong>all</strong>
+                                selected attributes will be highlighted <strong class="text-[#D95F02]">red</strong>.
+                                <br>
+                                <small>Note: the colors were chosen to be colorblind-friendly</small>
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Model modal -->
+            <div id="model-modal" tabindex="-1" aria-hidden="true"
+                class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                <div class="relative w-full max-w-2xl max-h-full">
+                    <!-- Modal content -->
+                    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                        <!-- Modal header -->
+                        <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                Model selection
+                            </h3>
+                            <button type="button"
+                                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                data-modal-hide="model-modal">
+                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 14 14">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                </svg>
+                                <span class="sr-only">Close modal</span>
+                            </button>
+                        </div>
+                        <!-- Modal body -->
+                        <div class="p-6 space-y-6">
+                            <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                This section is for creating models, which will be used to calculate the clustering of
+                                the data.
+                                You can switch between <strong>t-SNE</strong> and <strong>UMAP</strong>.
+
+                            </p>
+                            <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                <strong>t-SNE:</strong>
+                                Specify the t-SNE <strong>perplexity</strong> and <strong>iterations</strong> settings.
+                                The perplexity is related to the number of nearest neighbors that is used.
+                                The iterations sets the number of the times the algorithm will run.
+                                <br>
+                                <strong>UMAP:</strong>
+                                Specify the UMAP <strong>min-dist</strong> and <strong>n_neighbors</strong> settings.
+                                The min_dist parameter controls how tightly UMAP is allowed to pack points together.
+                                n_neighbors controls how UMAP balances local versus global structure in the data. low is
+                                local, high is more global.
+
+                            </p>
+                            <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                <strong>More information </strong>here for <a
+                                    class="font-medium text-blue-600 underline dark:text-blue-500 hover:no-underline"
+                                    href="https://jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf"
+                                    target="_blank">t-SNE</a>
+                                and for <a
+                                    class="font-medium text-blue-600 underline dark:text-blue-500 hover:no-underline"
+                                    href="https://arxiv.org/pdf/1802.03426.pdf" target="_blank">UMAP</a>.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
 
 
 

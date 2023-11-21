@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from icecream import ic
+from collections import Counter
 # from app.library.data import prepare as prepare
 
 
@@ -80,13 +81,20 @@ def load_matlab_csv(filename, scalar_and_array=True):
 
         # Concatenate array dataframes
         array_df = pd.concat(array_df_d, axis=1)
-
+    ic(array_df, scalar_df)
     return scalar_df, array_df
 
 
 def get_datas(data_filename, metadata_filename):
 
     scalar_data, array_data = load_matlab_csv(data_filename)
+
+
+    # csv_filename = 'beispiel.csv'
+
+    # # DataFrame in die CSV-Datei schreiben
+    # array_data.to_csv(csv_filename, index=True)
+
     array_data['Session_ID'] = scalar_data.loc[:, 'Session_ID']
     array_data = array_data.set_index('Session_ID')
     # create scalar and array df with index 'Session_ID'
@@ -97,6 +105,9 @@ def get_datas(data_filename, metadata_filename):
     meta_data = meta_data.set_index('DBid')
     # selecting only those metadata that are considered for UC1
     meta_data = meta_data.loc[scalar_data.index, :]
+
+
+
 
     #   Dies ist ein NumPy-Array, das die Information darüber speichert, ob die Daten für die rechte oder linke Seite (oder beide)
     #   des Patienten relevant sind. Diese Information wird aus den Spalten
@@ -110,48 +121,11 @@ def get_datas(data_filename, metadata_filename):
         (meta_data.UC1_betroffen_RE == 1)
     ] = 2
 
+
+
     print(f'[INFO] container.side length: {len(side)}')
     print(f'[INFO] container.data length: {len(array_data)}')
     print(f'[INFO] container.meta_data length: {len(meta_data)}')
-
-    # attribute_values = meta_data.columns[429:]  # only select usable columns*
-    # attribute_values = [
-    #     col for col in meta_data[attribute_values]
-    #     if represents_int(meta_data[col].values[0])
-    # ]
-
-    # print(attribute_values)
-
-    # selected_attribute_values = [
-    #     col for col in attribute_values[:20] if col in meta_data
-    # ]
-
-    # feature_table = prepare.prep_attribute(meta_data, selected_attribute_values)
-
-    # print(feature_table)
-    # print(meta_data)
-
-    # csv_filename = 'beispiel.csv'
-
-    # # DataFrame in die CSV-Datei schreiben
-    # # feature_table.to_csv(csv_filename, index=False)
-
-    # print(f'Daten wurden in die Datei "{csv_filename}" geschrieben.')
-
-    # Die erste Zeile des DataFrames auswählen, um die Spaltennamen zu erhalten
-    first_row = meta_data.iloc[0]
-
-    # Spaltennamen, die auf "re" enden
-    re_columns = [col for col in first_row.index if col.endswith('_re')]
-
-    # Spaltennamen, die auf "li" enden
-    li_columns = [col for col in first_row.index if col.endswith('_li')]
-
-    # Alle anderen Spalten
-    other_columns = [
-        col for col in first_row.index if col not in re_columns and col not in li_columns]
-    
-    ic(scalar_data)
 
 
 

@@ -5,6 +5,7 @@ import pandas as pd
 from collections import defaultdict
 from app.library.ingest import ingest as ingest
 from app.library.data.prepare import create_data_signalbase
+from icecream import ic
 
 class Signals():
     def __init__(self):
@@ -57,10 +58,10 @@ def signal_data_selection(
     """
 
 
-    #test_preset = get_preset(signal_dict, signal_names, signal_int)   # gets me a preset with an int, probably not used later
+    
 
     
-    n_list = list()         # list of signal keys, should be customizable, but is always one int //Subsampling rate, same as in execute_models
+    n_list = list()        
     n_list.append(5)
 
     signal_data_selection, _= create_data_signalbase(
@@ -72,6 +73,7 @@ def signal_data_selection(
         do_norm=None,
         legs=legs
         )
+    
     return signal_data_selection
 
 
@@ -82,6 +84,8 @@ def create_checkboxes_signals(data):
     col_names = [x[0] for x in data.columns]
     col_names = list(dict.fromkeys(col_names))
 
+    other = [str(x) for x in col_names if 'angles' not in str(x).lower() and 'moment' not in str(x).lower() and 'power' not in str(x).lower()]
+    ic(other)
     angle_moment_values = [str(x) for x in col_names if 'angles' in str(x).lower() or 'moment' in str(x).lower()]
     power_values = [str(x) for x in col_names if 'power' in str(x).lower()]
 

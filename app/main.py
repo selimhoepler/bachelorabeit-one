@@ -1,6 +1,7 @@
 
 
-from fastapi import FastAPI, Request, Form, File, UploadFile
+import math
+from fastapi import FastAPI, Request, Form, File, UploadFile, Body
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -16,6 +17,8 @@ from IPython.display import display as idisplay
 import json
 import numpy as np
 from pydantic import BaseModel
+from icecream import ic
+
 
 app = FastAPI()
 
@@ -32,7 +35,13 @@ class TsneSettings(BaseModel):
     # tsne_seed: int = 1         # Dont think that should be customizable
     d_metric: str = "euclidean"
 
+class UmapSettings(BaseModel):
+    min_dist: float = 0.1
+    n_neighbors: int = 15
 
+class ExecuteModel(BaseModel):
+    legs: str
+    interval: int = 5
 
 
 
@@ -58,6 +67,8 @@ async def upload_files(data_file: UploadFile = File(...), metadata_file: UploadF
         
         # Einlesen der Dateien mit load_matlab_csv
         array_data, meta_data, side, scalar_data = get_datas(data_tempfile_path, metadata_tempfile_path)
+
+        
         
         # Hier kannst du die verarbeiteten Daten speichern oder verwenden
         
@@ -85,15 +96,14 @@ async def upload_files(data_file: UploadFile = File(...), metadata_file: UploadF
 
     except Exception as e:
         print("Fehler beim Einlesen der Dateien:")
-        exception_file_path = "exception.txt"  # Passe den Dateipfad an
         logging.exception(e)
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 
 @app.post("/signals")
-async def process_signals(preset_data: dict):  #OPTIONAL: Subsampling_rate: int, legs: str, pre_processing: str (Advanced Options)
+async def process_signals(preset_data: dict):  
     try:
-        selected_preset = preset_data.get("preset")
+        
         print(f"this is selected preset as dict: {preset_data}")
         
         try:
@@ -108,6 +118,7 @@ async def process_signals(preset_data: dict):  #OPTIONAL: Subsampling_rate: int,
            # trying with JSON Preset
 
            signal_data = signal_data_selection(preset_data, array_data, side)
+
         
         except Exception as e:
             print("Fehler beim Laden der Signale:", e)
@@ -116,8 +127,7 @@ async def process_signals(preset_data: dict):  #OPTIONAL: Subsampling_rate: int,
         #print type of signal_data
         print(type(signal_data)) #dict
 
-        # tester = [col for col in signal_data.columns if col == "Age"]
-        # print (tester)
+
         
 
         try:
@@ -130,11 +140,12 @@ async def process_signals(preset_data: dict):  #OPTIONAL: Subsampling_rate: int,
             return JSONResponse(content={"error": str(e)}, status_code=500)
 
 
-        response_data = {"message": f"Die ausgewählte Option ist: {selected_preset}"}
+        response_data = {"message": f"Signals have been successfully read!"}
         print(response_data)
         return JSONResponse(content=response_data, status_code=200)
     
     except ValueError as ve:
+        logging.exception(ve)
         return JSONResponse(content={"error": str(ve)}, status_code=400)
 
     except Exception as e:
@@ -143,15 +154,17 @@ async def process_signals(preset_data: dict):  #OPTIONAL: Subsampling_rate: int,
     
 
 @app.post("/models")
-async def create_model(tsne_settings: TsneSettings):
+async def create_model(tsne_settings: TsneSettings, umap_settings: UmapSettings, selected_model_type: str = Body(...)):
     tsne_perplexity = tsne_settings.tsne_perplexity
     tsne_iterations = tsne_settings.tsne_iterations
-    # tsne_seed = tsne_settings.tsne_seed
     d_metric = tsne_settings.d_metric
+
+    min_dist = umap_settings.min_dist
+    n_neighbors = umap_settings.n_neighbors
 
 
     try:
-        model_type = "tsne"
+        model_type = selected_model_type
         models = {}
        
 
@@ -164,9 +177,14 @@ async def create_model(tsne_settings: TsneSettings):
                 # seed=tsne_seed,
                 metric=str(d_metric).lower(),
             )
+        elif model_type == "umap":
+            models = create_models.umap(
+                min_dist=min_dist,
+                n_neighbors=n_neighbors,
+                metric='euclidean',
+                n_epochs=None
+            )
 
-
-        print(type(models))
         print( models)
 
         try:
@@ -182,10 +200,16 @@ async def create_model(tsne_settings: TsneSettings):
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 
-@app.get("/execute")
-async def execute_all_models(    
-    interval:int = 5
-    ):
+
+
+
+@app.post("/execute")
+async def execute_all_models(data: ExecuteModel):
+    selected_legs = data.legs
+    interval = data.interval
+    # rest of the code
+
+
 
     interval_list = list()
     interval_list.append(interval)
@@ -193,16 +217,14 @@ async def execute_all_models(
         models = helpers.loadDict("models")
         signal_data = helpers.loadDict("signal_data")
         _,metadata ,_ ,scalar_data = helpers.loadPickle()
-
-        print(type(metadata))
-        print(type(scalar_data))
+        
 
         tsne_results, model_keys = execute_models.execute(
         models,
         signal_data,
         interval_list,
         do_print=True,
-        leg="both",
+        leg=selected_legs,
     )
 
         try:
@@ -218,26 +240,33 @@ async def execute_all_models(
 
             data_ids = tsne_results[model_name]['ids']
 
-            print(f'[INFO] signal_tsne_data: {signal_tsne_data}')
 
             x_data = list(signal_tsne_data[:,0])
 
-            print(f'[INFO] x_data: {x_data}')
+
 
             y_data = list(signal_tsne_data[:,1])
 
-            print(f'[INFO] y_data: {y_data}')
 
             z_data = list(data_ids)
 
+
             age_data = getAge(z_data, scalar_data)
-            print(f'[INFO] AGE DATA: {age_data}')
+
 
             results = []
             for i in range(len(signal_tsne_data)):
-                results.append({"x": x_data[i], "y": y_data[i], "z": z_data[i]})
+                results.append({"x": x_data[i], "y": y_data[i], "z": z_data[i], "age": age_data[i]})
 
+
+
+            results = helpers.replace_nan(results)
             print(f'[INFO] results: {results}')
+
+
+
+
+
 
             response_data = {"scatterplot_data": results}
 
@@ -280,6 +309,10 @@ async def execute_all_models(
             return JSONResponse(content={"error": str(e)}, status_code=500)
 
         return JSONResponse(content=json.loads(json_str), status_code=200)
+    except ValueError as ve:
+        logging.exception(ve)
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+    
     except Exception as e:
         logging.exception(e)
         return JSONResponse(content={"error": str(e)}, status_code=500)

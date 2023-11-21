@@ -5,13 +5,14 @@
 @tailwind components;
 @tailwind utilities;
 
-body, html {
-    height:100%;
-    font-family: Poppins, sans-serif;
+body,
+html {
+  height: 100%;
+  font-family: Poppins, sans-serif;
 }
 
 .justify-between {
-    justify-content: space-between;
+  justify-content: space-between;
 
 }
 
@@ -27,47 +28,57 @@ body, html {
 .m-10 {
   margin: 15px;
 }
+
 /* .pb-4 {
  padding-bottom: 4px !important; 
 } */
+
+/* Toast fadeout */
+
+.toast-fade-move {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+ 
 
 
 
 /* ------------------------ SCrollbar ------------------------ */
 
 ::-webkit-scrollbar {
-    width: 12px;
+  width: 5px;
 
-  }
-  
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: #ffffff;
-    border-radius: 10px;
-    padding: 3px;
-  }
-  
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: #B4B5F8;
-    border-radius: 10px;
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: #aaabfc;
-  }
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 3px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #B4B5F8;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #8e8ff4;
+}
 
 
-  /* -----------------info boxes ------------------- */
+/* -----------------info boxes ------------------- */
 
-  .general-info-box {
-    padding: 3px;
-    background-color: rgb(199, 220, 234);
-    border-style: solid;
-    border-width: 0px 0px 0px 2px;
-    border-color: blue;
-    border-radius: 5px 5px 5px 5px;
+.general-info-box {
+  padding: 3px;
+  background-color: rgb(199, 220, 234);
+  border-style: solid;
+  border-width: 0px 0px 0px 2px;
+  border-color: blue;
+  border-radius: 5px 5px 5px 5px;
 }
 
 .attribute-info-box {
@@ -78,4 +89,76 @@ body, html {
   border-color: red;
   border-radius: 5px 5px 5px 5px;
   margin: 5px;
+}
+
+.infobox {
+background-color: rgba(0, 0, 0, 0.038);
+border-radius: 4px;
+margin-bottom: 15px;
+padding: 5px;
+}
+
+.infobox:hover{
+  background-color: rgba(128, 128, 128, 0.159);
+}
+
+.shadowy {
+  box-shadow: 0px 1px 20px 0px rgba(128, 128, 128, 0.318);
+}
+
+.myContainer {
+  border: none !important;
+  border-radius: 5px;
+  box-shadow: 0px 0px 15px #c4c4c4;
+  margin: 5px;
+}
+
+/* Btn Group */
+
+.active {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+  --tw-bg-opacity: 1;
+  background-color: rgb(17 24 39 / var(--tw-bg-opacity));
+}
+
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  top: -9px;
+  position: relative;
+  color: #aaa;
+  float: right;
+  font-size: 38px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }

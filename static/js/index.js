@@ -405,6 +405,9 @@ const inputFilesMetadata = document.getElementById('input-metadata');
 const perplexitySlider = document.getElementById('tsne-perplexity-slider');
 const iterationsSlider = document.getElementById('tsne-iterations-slider');
 
+const minDistSlider = document.getElementById('umap-minDist-slider');
+const nNeighborsSlider = document.getElementById('umap-n-neighbors-slider');
+
 const presetDropdown = document.getElementById("preset-dropdown");
 const sendButton = document.getElementById("send-button");
 
@@ -412,7 +415,11 @@ const attributeContainer = document.getElementById("attribute-checkbox-container
 
 const modelsButton = document.getElementById("models-button-tsne");
 
+const modelButtons = document.querySelectorAll('.models-button')
+
 const executeButton = document.getElementById("execute-button");
+
+const blurryContainers = document.querySelectorAll(".blurryCont");
 
 
 // var for the charts 
@@ -424,6 +431,21 @@ var infoChart;
 var discreteList = [];
 
 var firstClick = true;
+
+var tooltipData = [];
+
+var attributeData = [];
+
+let sumAttributes = true;
+let leg = 'both'
+
+const sumHighlightBtn = document.getElementById("sumHighlightBtn");
+const intHighlightBtn = document.getElementById("intersectionHighlightBtn");
+
+const legBtnBoth = document.getElementById('leg-btn-both');
+const legBtnIndividual = document.getElementById('leg-btn-individual');
+const legBtnAll = document.getElementById('leg-btn-all');
+
 
 
 
@@ -460,9 +482,9 @@ dataSubmitBtn.addEventListener('click', async () => {
     }
 
     // Change style of input btn // Could be doing this in a function
-    dataSubmitBtn.textContent = 'Lädt...';
+    dataSubmitBtn.textContent = 'Loading...';
     dataSubmitBtn.disabled = true;
-    dataSubmitBtn.classList.remove('hover:bg-blue-600');
+    dataSubmitBtn.classList.remove('hover:bg-indigo-600');
 
     // Make formData Object to collect Files
     const formData = new FormData();
@@ -479,15 +501,15 @@ dataSubmitBtn.addEventListener('click', async () => {
         });
 
         if (response.ok) {
-            // Erfolgreich behandelt
+
             const data = await response.json();
             console.log(data);
 
             //filtering the data for the usable info for signal and attribute checkboxes
-            checkBoxData = data.response.checkboxes;
+            const checkBoxData = data.response.checkboxes;
             console.log(checkBoxData);
 
-            attributes = data.response.attributes
+            const attributes = data.response.attributes
             console.log(attributes)
 
             // Erstelle die Checkboxen
@@ -496,14 +518,21 @@ dataSubmitBtn.addEventListener('click', async () => {
 
 
             // enable preset selection TODO: Enable disabled execute BTN (maybe after everythings done)
+            blurryContainers.forEach((element) => {
+                element.classList.remove('opacity-30');
+                element.classList.remove('pointer-events-none')
+            });
             presetDropdown.disabled = false;
             sendButton.disabled = false;
             sendButton.classList.add('hover:bg-blue-600');
+            showToast('Data succesfully uploaded', 'success')
         } else {
             console.error('Fehler beim Senden der Dateien:', response);
+            showToast('Error while loading data', 'danger')
         }
     } catch (error) {
         console.error('Fehler beim Senden der Dateien:', error);
+        showToast('Error while loading data', 'danger')
     } finally {
         // Change button styling back
         dataSubmitBtn.textContent = 'Submit';
@@ -676,30 +705,46 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     sendButton.addEventListener("click", async () => {
-        const selectedPreset = presetDropdown.value;
+        
 
 
         const preset = getSignalJSON();
 
 
+        if (preset.signals.length !== 0) {
 
-        try {
-            const response = await fetch("/signals", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(preset),
-            });
+            sendButton.textContent = 'Loading...';
+            sendButton.disabled = true;
+            sendButton.classList.remove('hover:bg-indigo-600');
+            // The array is not empty
 
-            if (response.ok) {
-                console.log("Option erfolgreich ans Backend gesendet.");
-                console.log(await response.json());
-            } else {
-                console.error("Fehler beim Senden der Option ans Backend:", response.statusText);
+            try {
+                const response = await fetch("/signals", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(preset),
+                });
+
+                if (response.ok) {
+                    console.log("Option successfully sent to backend.");
+                    console.log(await response.json());
+                    showToast('Successfully read signals', 'success');
+                } else {
+                    console.error("Error while sending option to the backend:", response.statusText);
+                    showToast('Error while reading signals', 'danger');
+                }
+            } catch (error) {
+                console.error("Error while sending option to the backend:", error);
+                showToast('Error while reading signals', 'danger');
+            } finally {
+                sendButton.textContent = 'Send';
+                sendButton.disabled = false;
+                sendButton.classList.add('hover:bg-indigo-600');
             }
-        } catch (error) {
-            console.error("Fehler1 beim Senden der Option ans Backend:", error);
+        } else {
+            showToast('please select at least one signal and one type', 'warning');
         }
     });
 });
@@ -765,6 +810,18 @@ function convertPresetToCheckboxes2(preset) {
     // Iterate through the subcontainers
     subContainers.forEach((subContainer, index) => {
         const checkbox = subContainer.querySelector('input[type="checkbox"]');
+
+        //reset all checkboxes
+        const signalBoxesContainer = subContainer.querySelector('.signalboxes-container');
+        const signalBoxes = signalBoxesContainer.querySelectorAll('input[type="checkbox"]');
+
+        // Reset all sub-checkboxes
+        signalBoxes.forEach(box => {
+            box.checked = false;
+            console.log(box)
+        });
+
+
         const checkboxName = checkbox.name;
 
         // Find the index of this checkbox name in the preset signals
@@ -778,8 +835,6 @@ function convertPresetToCheckboxes2(preset) {
             const signalBoxesContainer = subContainer.querySelector('.signalboxes-container');
             const signalBoxes = signalBoxesContainer.querySelectorAll('input[type="checkbox"]');
 
-            // Reset all sub-checkboxes
-            signalBoxes.forEach(box => box.checked = false);
 
             // Check the sub-checkboxes according to preset
             columnIndices.forEach(idx => {
@@ -818,6 +873,20 @@ function getCheckedAttributes() {
     return checkedList
 }
 
+// helper function for getSelectedDatapoints
+// checks if the specific datapoint already has a checked attribute, if no it gets added with its value,
+// if yes it gets added with different value
+function updateDbidList(dbidlist, dbid, incrementValue) {
+    const found = dbidlist.find(item => Object.keys(item)[0] === dbid.toString());
+
+    if (found) {
+        found[dbid] += incrementValue;
+    } else {
+        dbidlist.push({ [dbid]: incrementValue });
+    }
+}
+
+
 
 
 
@@ -825,7 +894,14 @@ function getCheckedAttributes() {
 //This function gets a list for each index that has the attribute which is checked in the attributes section
 function getSelectedDatapoints() {
     return new Promise((resolve, reject) => {
+
+        // get a list of all the checked attributes
         const checkedAttributes = getCheckedAttributes();
+
+        //resolve as an empty array if no attributes are seleected
+        if (checkedAttributes.length === 0) {
+            return resolve([]);
+        }
 
         fetch('/static/json/attributes.json')
             .then(response => response.json())
@@ -834,32 +910,64 @@ function getSelectedDatapoints() {
                 var indexlist = [];
                 var dbidlist = [];
 
+                // get the indexes of each checked attribute, to filter the data
                 data.columns.forEach(element => {
                     if (checkedAttributes.includes(element)) {
                         indexlist.push(data.columns.indexOf(element));
-
                     }
                 });
 
-                var tester = 0;
+                console.log(indexlist);
+                //Depending on sumAttributes, return a list of indices either of the points that match ONE of the checked attributes
+                // or the points that match ALL of the checked attributes
+                if (sumAttributes) { // EITHER of the attributes
+                    data.data.forEach(row => {
+                        indexlist.forEach(index => {
+                            if (row[index] === 1) {
+                                const incrementValue = checkedAttributes.indexOf(data.columns[index]) + 1;
+                                updateDbidList(dbidlist, row[dbid], incrementValue);
+                            }
+                        });
 
-                data.data.forEach(row => {
-                    indexlist.forEach(index => {
-                        if (row[index] === 1 && !dbidlist.includes(row[dbid])) {
-                            dbidlist.push(row[dbid]);
+                        // Check for attributes with string values
+                        row.forEach(value => {
+                            checkedAttributes.forEach(attribute => {
+                                if (value === attribute) {
+                                    const incrementValue = checkedAttributes.indexOf(attribute) + 1;
+                                    updateDbidList(dbidlist, row[dbid], incrementValue);
+                                }
+                            });
+                        });
+                    });
+
+
+
+                } else { // ALL of the attributes
+                    data.data.forEach(row => {
+                        let matchCount = 0;
+
+                        // Check for integer attributes (1s)
+                        indexlist.forEach(index => {
+                            if (row[index] === 1) {
+                                matchCount++;
+                            }
+                        });
+
+                        // Check for attributes with string values
+                        row.forEach(value => {
+                            checkedAttributes.forEach(attribute => {
+                                if (value === attribute) {
+                                    matchCount++;
+                                }
+                            });
+                        });
+
+                        // If the number of matches equals the number of checked attributes, add the dbid
+                        if (matchCount === checkedAttributes.length && !dbidlist.includes(row[dbid])) {
+                            dbidlist.push({ [row[dbid]]: 1 });
                         }
                     });
-
-
-                    row.forEach(value => {
-                        checkedAttributes.forEach(attribute => {
-                            if (value === attribute && !dbidlist.includes(row[dbid])) {
-                                dbidlist.push(row[dbid]);
-                            }
-                        })
-                    });
-
-                });
+                }
 
                 resolve(dbidlist); // Resolve the promise with dbidlist
             })
@@ -869,6 +977,7 @@ function getSelectedDatapoints() {
             });
     });
 }
+
 
 
 
@@ -899,15 +1008,14 @@ attributeContainer.addEventListener('change', async (e) => {
 
 
             chart.w.config.series[0].data.map((point, index) => {
-                if (indexList.includes(point.z)) {
+                let value;
+                const matchedObj = indexList.find(obj => obj.hasOwnProperty(point.z));
 
-                    pushThisIndexAsDiscrete(index);
-
-
-                    // Size for highlighted markers
-                } else {
-                    // Default size
+                if (matchedObj) {
+                    value = matchedObj[point.z];
+                    pushThisIndexAsDiscrete(index, value);  // Assuming you want to pass the value to the function
                 }
+
             });
 
 
@@ -943,11 +1051,37 @@ attributeContainer.addEventListener('change', async (e) => {
 });
 
 
-function pushThisIndexAsDiscrete(index) {
+function pushThisIndexAsDiscrete(index, value) {
+    let color = '#C73E1D'
+
+    switch (value) {
+        case 1: {
+            color = "#D95F02";
+
+            break;
+        }; // Color for both attribute match
+        case 2: {
+            color = "#7570B3";
+
+            break;
+        }; // Color for 1 attribute matches
+        case 3: {
+            color = "#1B9E77";
+
+            break;
+        }; // Color for 2 attributes match
+        default: {
+            color = '#f0f0f0';
+
+            break;
+        };// Default color or no color
+    }
+
+
     const discrete = {
         seriesIndex: 0,
         dataPointIndex: index,
-        fillColor: "#C73E1D",
+        fillColor: color,
         strokeColor: "#FFF",
         size: 6
     }
@@ -1020,59 +1154,60 @@ presetDropdown.addEventListener("change", async () => {
 
 
 
-function dataPointSelected(index) {
+async function dataPointSelected(index) {
     console.log('datapoint selected', index);
     console.log(chart.w.config.series[0].data[index]);
 
-    // The id or z-value of the selected datapoint,
     const dataPointDBID = chart.w.config.series[0].data[index].z
+    const age = chart.w.config.series[0].data[index].age
 
-    // A list that will be containing the attributes correspondant to the selected datapoint
-    var intAttributeNameList = []
-    var strAttributeNameList = []
-
-
-
-
-    fetch('/static/json/attributes.json')
-        .then(response => response.json())
-        .then(data => {
-            const dbidIndex = data.columns.indexOf("DBId");
-
-            data.data.forEach(row => {
-                if (row[dbidIndex] === dataPointDBID) {
-                    console.log(row);
+    try {
+        const attributeNameArray = await getAttributes(dataPointDBID);
+        var intAttributeNameList = attributeNameArray[0];
+        var strAttributeNameList = attributeNameArray[1];
+        strAttributeNameList.push(age)
 
 
+        displayInformation(intAttributeNameList, strAttributeNameList);
 
-                    row.forEach((col, colindex) => {
-                        if (col === 1) {
-                            console.log(colindex);
-                            intAttributeNameList.push(data.columns[colindex]);
-                        } else if (typeof col === 'string') {
-                            strAttributeNameList.push(col);
-                        }
-                    });
+        if (firstClick) {
+            const element = document.getElementById("yellowCont");
+            element.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+            firstClick = false;
+        }
+    } catch (error) {
+        console.error("Error while fetching attributes:", error);
+    }
+}
 
-                    // hier muss ich dann die daten verwerten iwie idk
-                    console.log(intAttributeNameList, strAttributeNameList);
+function getAttributes(dbid) {
+    return new Promise((resolve, reject) => {
+        var intAttributeNameList = [];
+        var strAttributeNameList = [];
 
-                    displayInformation(intAttributeNameList, strAttributeNameList);
+        fetch('/static/json/attributes.json')
+            .then(response => response.json())
+            .then(data => {
+                const dbidIndex = data.columns.indexOf("DBId");
 
-
-                    if (firstClick){
-
-                    const element = document.getElementById("yellowCont");
-                    //you can do it by jquery. no matter
-                    element.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
-
-                    firstClick = false;
+                data.data.forEach(row => {
+                    if (row[dbidIndex] === dbid) {
+                        row.forEach((col, colindex) => {
+                            if (col === 1) {
+                                intAttributeNameList.push(data.columns[colindex]);
+                            } else if (typeof col === 'string') {
+                                strAttributeNameList.push(col);
+                            }
+                        });
                     }
-                }
+                });
+                resolve([intAttributeNameList, strAttributeNameList]);
+            })
+            .catch(error => {
+                console.error("Error fetching attributes:", error);
+                reject(error);
             });
-
-        });
-
+    });
 }
 
 
@@ -1095,9 +1230,8 @@ async function dataCloudSelected() {
         var attributeStatisticList = [];
 
         data.data.forEach(row => {
-            if (selectedDatapoints.includes(row[dbidIndex])) {
-
-
+            const matchedObj = selectedDatapoints.find(obj => obj.hasOwnProperty(row[dbidIndex]));
+            if (matchedObj) {
                 row.forEach((attribute, index) => {
                     if (attribute === 1) {
                         attributeStatisticList.push(data.columns[index])
@@ -1105,11 +1239,7 @@ async function dataCloudSelected() {
                     if (typeof attribute === 'string') {
                         attributeStatisticList.push(attribute)
                     }
-                })
-
-
-
-
+                });
             }
         });
 
@@ -1125,6 +1255,8 @@ async function dataCloudSelected() {
 
 function displayInformation(intAttributeNameList, strAttributeNameList) {
 
+    console.log('Were in the function barude', intAttributeNameList, strAttributeNameList);
+
     const generalInfoContainer = document.getElementById('general-info-container');
     const attributeInfoContainer = document.getElementById('attribute-info-container');
 
@@ -1132,6 +1264,8 @@ function displayInformation(intAttributeNameList, strAttributeNameList) {
     attributeInfoContainer.innerHTML = '';
 
     strAttributeNameList.forEach(attribute => {
+        console.log(attribute);
+
         const generalInfoBox = document.createElement('div');
         generalInfoBox.classList.add('general-info-box');
 
@@ -1141,6 +1275,7 @@ function displayInformation(intAttributeNameList, strAttributeNameList) {
         generalInfoBox.appendChild(newParagraph);
 
         generalInfoContainer.appendChild(generalInfoBox);
+        console.log(generalInfoContainer);
     })
 
     intAttributeNameList.forEach(attribute => {
@@ -1178,13 +1313,14 @@ function displayCloudInformation(attributeList) {
     const categories = dataArray.map(obj => obj.category);
     const data = dataArray.map(obj => obj.value);
 
-    console.log(data);
+
 
     // Check if infoChart exists
     if (infoChart) {
         // Update the existing chart with new data
         infoChart.updateOptions({
             series: [{
+                name: '',
                 data: data
             }],
             xaxis: {
@@ -1197,10 +1333,11 @@ function displayCloudInformation(attributeList) {
         // Create chart
         var options = {
             chart: {
-                height: '100%',
-                type: 'bar' // or 'pie', 'donut', 'treemap', etc.
+                height: '500px',
+                type: 'bar'
             },
             series: [{
+                name: '',
                 data: data
             }],
             xaxis: {
@@ -1223,34 +1360,66 @@ function displayCloudInformation(attributeList) {
 //
 // Model creating section
 //
+modelButtons.forEach(btn => {
 
-modelsButton.addEventListener("click", async () => {
-    const perplexity = parseInt(perplexitySlider.value, 10);
-    const iterations = parseInt(iterationsSlider.value, 10)
 
-    console.log(perplexity);
+    btn.addEventListener("click", async () => {
+        const perplexity = parseInt(perplexitySlider.value, 10);
+        const iterations = parseInt(iterationsSlider.value, 10);
+        const dMetricValue = "euclidean"
 
-    try {
-        const response = await fetch("/models", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                tsne_perplexity: perplexity,
-                tsne_iterations: iterations
-            })
-        });
+        const minDistValue = parseFloat(minDistSlider.value);
+        const nNeighborsValue = parseInt(nNeighborsSlider.value, 10);
 
-        if (response.ok) {
-            console.log("Modelle erfolgreich ans Backend gesendet.");
-            console.log(await response.json());
-        } else {
-            console.error("Fehler beim Senden der Modelle ans Backend:", response.statusText);
+        console.log(btn.value)
+
+
+        const modelType = btn.value;
+
+
+        console.log(perplexity, iterations, dMetricValue, minDistValue, nNeighborsValue);
+
+        try {
+            const response = await fetch("/models", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    tsne_settings: {
+                        tsne_perplexity: perplexity,
+                        tsne_iterations: iterations,
+                        // Assuming you have d_metric somewhere in your JS
+                        d_metric: dMetricValue
+                    },
+                    // Assuming you also have UMAP settings in your JS
+                    umap_settings: {
+                        min_dist: minDistValue,
+                        n_neighbors: nNeighborsValue
+                    },
+                    selected_model_type: modelType
+                })
+            });
+
+
+            if (response.ok) {
+                console.log("Models successfully sent to backend.");
+                console.log(await response.json());
+                showToast('Models successfully loaded', 'success')
+                blurryContainers.forEach((element) => {
+                    element.classList.remove('opacity-30');
+                    element.classList.remove('pointer-events-none')
+                });
+            } else {
+                console.error("Fehler beim Senden der Modelle ans Backend:", response.statusText);
+                showToast('Error while loading models', 'danger')
+            }
+        } catch (error) {
+            console.error("Fehler1 beim Senden der Modelle ans Backend:", error);
+            showToast('Error while loading models', 'danger')
         }
-    } catch (error) {
-        console.error("Fehler1 beim Senden der Modelle ans Backend:", error);
-    }
+    });
+
 });
 
 
@@ -1262,38 +1431,71 @@ modelsButton.addEventListener("click", async () => {
 //
 
 
-/* function getGradientColor(value) {
-    const minValue = -10; // Mindestwert der dritten Dimension
-    const maxValue = 10; // Höchstwert der dritten Dimension
-    const colorStart = '#0061FF'; // Anfangsfarbe (Blau)
-    const colorEnd = '#C1EFFF'; // Endfarbe (Rot)
+async function getTooltipData() {
+    const data = chart.w.config.series[0].data;
 
-    // Berechnung des Farbwerts basierend auf dem Wert der dritten Dimension
-    const ratio = (value - minValue) / (maxValue - minValue);
-    const color = blendColors(colorStart, colorEnd, ratio);
+    var tooltipDataArray = {};
 
-    return color;
+    for (const index of data) {
+        const dbid = index.z;
+        const dataAttributes = await getAttributes(dbid);
+
+
+        let affectedSide = '';
+        if (dataAttributes[0].includes('UC1_betroffen_LI') && dataAttributes[0].includes('UC1_betroffen_RE')){
+            affectedSide = 'Both';
+        } else if (dataAttributes[0].includes('UC1_betroffen_LI')){
+            affectedSide = 'Left';
+        } else if (dataAttributes[0].includes('UC1_betroffen_RE')){
+            affectedSide = 'Right';
+        }
+        
+        
+
+        const stringAttributes = dataAttributes[1];
+
+        // Structure the data for easy lookup by dbid
+        tooltipDataArray[dbid] = { attributes: stringAttributes, affectedSide: affectedSide };
+    }
+
+    console.log(tooltipDataArray);
+
+    return tooltipDataArray;  // Return the processed data
 }
 
-// Funktion zum Mischen von Farben
-function blendColors(colorStart, colorEnd, ratio) {
-    const r = Math.round(parseInt(colorStart.substring(1, 3), 16) * (1 - ratio) + parseInt(colorEnd.substring(1, 3), 16) * ratio);
-    const g = Math.round(parseInt(colorStart.substring(3, 5), 16) * (1 - ratio) + parseInt(colorEnd.substring(3, 5), 16) * ratio);
-    const b = Math.round(parseInt(colorStart.substring(5, 7), 16) * (1 - ratio) + parseInt(colorEnd.substring(5, 7), 16) * ratio);
-    return `rgb(${r},${g},${b})`;
-} */
 
+
+//
+// Chart section
+//
 
 
 
 executeButton.addEventListener("click", async () => {
     try {
+        console.log(typeof (leg));
+        const intervalValue = 5;
+        executeButton.textContent = 'Loading...';
+        executeButton.disabled = true;
+        executeButton.classList.remove('hover:bg-red-600');
         const response = await fetch("/execute", {
-            method: "GET",
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            // or wherever you're getting this value from
+
+            body: JSON.stringify({
+                legs: leg, // Assuming leg is a string like "both"
+                interval: intervalValue
+            })
+
+
         });
 
         if (response.ok) {
-            console.log("Modelle erfolgreich executed.");
+
+            console.log("Models successfully executed.");
 
             const responseData = await response.json(); // JSON-Daten nur einmal lesen
 
@@ -1303,7 +1505,8 @@ executeButton.addEventListener("click", async () => {
                 x: item.x,
                 y: item.y,
                 z: item.z,
-                // fillColor: getGradientColor(item.z)
+                age: item.age,
+                
             }));
 
 
@@ -1320,11 +1523,17 @@ executeButton.addEventListener("click", async () => {
                         data: series
                     }]
                 });
+
+                getTooltipData().then(data => {
+                    tooltipData = data;
+                });
+
+
             } else {
 
                 var options = {
                     series: [{
-                        name: "Sample B",
+                        name: "",
                         data: series
                     }],
                     chart: {
@@ -1347,10 +1556,9 @@ executeButton.addEventListener("click", async () => {
                         show: false,
                         tickAmount: 10,
                         labels: {
-                            formatter: function (val) {
-                                return parseFloat(val).toFixed(1);
-                            }
-                        }
+                            show: false,
+                        },
+                        
                     },
                     yaxis: {
                         show: false,
@@ -1358,117 +1566,67 @@ executeButton.addEventListener("click", async () => {
                     },
                     markers: {
                         size: 4,
-                        colors: ['#6366F1'],
+                        colors: ['#A6CEE3'],
+                    }, tooltip: {
+                        custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+                            var data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
+                            //get 'dbID'
+                            const dataPointDBID = chart.w.config.series[0].data[dataPointIndex].z
+
+                            // get str attributes from attributes.json
+                            var attributes
+                            Object.keys(tooltipData).forEach(key => {
+
+                                if (key == dataPointDBID) {
+
+                                    attributes = tooltipData[key].attributes;
+                                    affectedSide = tooltipData[key].affectedSide;
+                                }
+
+                            });
+
+
+
+
+
+                            return '<ul>' +
+                                '<li><b>ID</b>: \'' + data.z + '\'</li>' +
+                                '<li><b>Age</b>: \'' + data.age + '\'</li>' +
+                                '<li><b>Sex</b>: \'' + attributes[0] + '\'</li>' +
+                                '<li><b>Rough category</b>: \'' + attributes[1] + '\'</li>' +
+                                '<li><b>Affected Side</b>: \'' + affectedSide + '\'</li>' +
+                                '</ul>';
+
+                        }
                     }
                 };
 
                 chart = new ApexCharts(document.getElementById("plot-container"), options);
                 chart.render();
 
+                getTooltipData().then(data => {
+                    tooltipData = data;
+                });
+
+
+
+
+
             }
         } else {
-            console.error("Fehler beim Senden der Modelle ans Backend:", response.statusText);
+            console.error("Something went wrong while executing:", response.statusText);
+            showToast('Something went wrong while executing', 'danger')
         }
     } catch (error) {
-        console.error("Fehler1 beim Senden der Modelle ans Backend:", error);
+        console.error("Something went wrong while executing:", error);
+        showToast('Something went wrong while executing', 'danger')
+    }
+    finally {
+        executeButton.textContent = 'Execute';
+        executeButton.disabled = false;
+        executeButton.classList.add('hover:bg-red-600');
     }
 });
-
-
-
-
-
-
-
-
-//
-// Chart section
-//
-
-/* function tsneapex2() {
-
-    function getGradientColor(value) {
-        const minValue = -10; // Mindestwert der dritten Dimension
-        const maxValue = 10; // Höchstwert der dritten Dimension
-        const colorStart = '#0061FF'; // Anfangsfarbe (Blau)
-        const colorEnd = '#C1EFFF'; // Endfarbe (Rot)
-
-        // Berechnung des Farbwerts basierend auf dem Wert der dritten Dimension
-        const ratio = (value - minValue) / (maxValue - minValue);
-        const color = blendColors(colorStart, colorEnd, ratio);
-
-        return color;
-    }
-
-    // Funktion zum Mischen von Farben
-    function blendColors(colorStart, colorEnd, ratio) {
-        const r = Math.round(parseInt(colorStart.substring(1, 3), 16) * (1 - ratio) + parseInt(colorEnd.substring(1, 3), 16) * ratio);
-        const g = Math.round(parseInt(colorStart.substring(3, 5), 16) * (1 - ratio) + parseInt(colorEnd.substring(3, 5), 16) * ratio);
-        const b = Math.round(parseInt(colorStart.substring(5, 7), 16) * (1 - ratio) + parseInt(colorEnd.substring(5, 7), 16) * ratio);
-        return `rgb(${r},${g},${b})`;
-    }
-
-
-
-
-    fetch('/execute')
-
-        .then(response => response.json())
-        .then(data => {
-            console.log(data)
-
-
-            const series = data.scatterplot_data.map(item => ({
-                x: item.x,
-                y: item.y,
-                // fillColor: getGradientColor(item.z)
-            }));
-
-
-            var options = {
-                series: [
-                    //         {
-                    //     name: "SAMPLE A",
-                    //     data: data.scatterplot_data2
-                    // },
-                    {
-                        name: "Sample B",
-                        data: series
-                    }],
-                chart: {
-                    height: 500,
-                    type: 'scatter',
-                    zoom: {
-                        enabled: true,
-                        type: 'xy'
-                    }
-                },
-                xaxis: {
-                    tickAmount: 10,
-                    labels: {
-                        formatter: function (val) {
-                            return parseFloat(val).toFixed(1)
-                        }
-                    }
-                },
-                yaxis: {
-                    tickAmount: 7
-                },
-
-                markers: {
-                    size: 8,
-                    colors: series.map(item => item.fillColor)
-                }
-            };
-
-            chart = new ApexCharts(document.getElementById("scatterplot"), options);
-            chart.render();
-        })
-        .catch(error => {
-            console.log('Fehler beim Abrufen der Daten:', error);
-        });
-} */
-
 
 
 
@@ -1485,22 +1643,148 @@ executeButton.addEventListener("click", async () => {
 
 
 //get the value of sliders
-window.onload = function() {
-    
+window.onload = function () {
+
     const tsnePerplexityOutput = document.getElementById("tsne-perplexity-value");
     const tsneIterationsOutput = document.getElementById('tsne-iterations-value');
+    const umapMinDistOutput = document.getElementById('umap-minDist-value');
+    const umapNNeighborsOutput = document.getElementById('umap-n-neighbors-value');
 
     tsnePerplexityOutput.value = perplexitySlider.value; // set the initial value on page load
     tsneIterationsOutput.value = iterationsSlider.value;
+    umapMinDistOutput.value = minDistSlider.value;
+    umapNNeighborsOutput.value = nNeighborsSlider.value;
 
-    perplexitySlider.oninput = function() {
+    perplexitySlider.oninput = function () {
         tsnePerplexityOutput.value = this.value; // update the value when the slider changes
     }
 
-    iterationsSlider.oninput = function() {
+    iterationsSlider.oninput = function () {
         tsneIterationsOutput.value = this.value; // update the value when the slider changes
+        console.log(chart.w.config)
+    }
+
+    minDistSlider.oninput = function () {
+        umapMinDistOutput.value = this.value; // update the value when the slider changes
+    }
+
+    nNeighborsSlider.oninput = function () {
+        umapNNeighborsOutput.value = this.value; // update the value when the slider changes
     }
 
 }
 
 
+//toast-notifications
+
+
+function showToast(message, type = 'success') {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-indigo-100 rounded-lg shadow dark:text-gray-400 dark:bg-gray-800 fixed top-5 right-5`;
+    toast.setAttribute('role', 'alert');
+
+    // Check icon container
+    const iconContainer = document.createElement('div');
+    iconContainer.className = `inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-${type}-500 bg-${type}-100 rounded-lg dark:bg-${type}-800 dark:text-${type}-200`;
+    let iconSVG = ""
+    // Check icon SVG
+    if (type == 'success') {
+        iconSVG = `<div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200">
+        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+        </svg>
+        <span class="sr-only">Check icon</span>
+        </div>`;
+    } else if (type == "danger") {
+        iconSVG = `<div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200">
+        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z"/>
+        </svg>
+        <span class="sr-only">Error icon</span>
+        </div>`
+    } else if (type == 'warning') {
+        iconSVG = `<div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-orange-500 bg-orange-100 rounded-lg dark:bg-orange-700 dark:text-orange-200">
+        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z"/>
+        </svg>
+        <span class="sr-only">Warning icon</span>
+    </div>`
+    }
+
+    // Close button
+    const closeButton = `    <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-inigo-100 text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" data-dismiss-target="#toast-success" aria-label="Close">
+        <span class="sr-only">Close</span>
+        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+        </svg>
+        </button>`;
+
+    // Append icon SVG to icon container
+    iconContainer.innerHTML = iconSVG;
+
+    // Message container
+    const messageContainer = document.createElement('div');
+    messageContainer.className = 'ml-3 text-sm font-normal';
+    messageContainer.textContent = message;
+
+    // Append icon container and message container to toast
+    toast.appendChild(iconContainer);
+    toast.appendChild(messageContainer);
+
+    // Append close button to toast
+    toast.innerHTML += closeButton;
+
+    // Append toast to body or a specific container
+    document.body.appendChild(toast);
+
+    // Move to the top and fade out
+    // Start the fade-out and move-up animation before removing the toast
+    setTimeout(() => {
+        toast.classList.add('toast-fade-move');
+    }, 4500);
+    // Remove toast after a delay
+    setTimeout(() => {
+        document.body.removeChild(toast);
+    }, 6000);
+}
+
+
+// btn styling and stuff
+
+sumHighlightBtn.addEventListener("click", function () {
+    sumAttributes = true;
+    sumHighlightBtn.classList.add('active');
+    intHighlightBtn.classList.remove('active');
+});
+
+
+intHighlightBtn.addEventListener("click", function () {
+    sumAttributes = false;
+    intHighlightBtn.classList.add('active');
+    sumHighlightBtn.classList.remove('active');
+
+});
+
+legBtnBoth.addEventListener("click", function () {
+    leg = 'both';
+    legBtnBoth.classList.add('active');
+    legBtnIndividual.classList.remove('active');
+    legBtnAll.classList.remove('active');
+
+});
+
+legBtnIndividual.addEventListener("click", function () {
+    leg = 'individual';
+    legBtnIndividual.classList.add('active');
+    legBtnBoth.classList.remove('active');
+    legBtnAll.classList.remove('active');
+
+});
+
+legBtnAll.addEventListener("click", function () {
+    leg = 'all';
+    legBtnAll.classList.add('active');
+    legBtnBoth.classList.remove('active');
+    legBtnIndividual.classList.remove('active');
+});

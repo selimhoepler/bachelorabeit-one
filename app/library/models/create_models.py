@@ -1,7 +1,7 @@
 import multiprocessing
 
 from sklearn.manifold import TSNE
-#import umap as umapo
+import umap as umapo
 import numpy as np
 
 
@@ -31,7 +31,7 @@ def tsne(
     models = {}
     
     print(f'[GENERATE][ENTER] tsne()') 
-    print(f'[INFO] perplexity values: begin_p: {begin_p}, end_p: {end_p}')
+    print(f'[INFO] perplexity value: {begin_p}')
     print(f'[INFO] TSNE iterations: {iter}')
     print(f'[INFO] threads: {n_threads}')
 
@@ -57,10 +57,7 @@ def tsne(
 
 
 def umap(
-        n_neighbors_range=(10, 25),
-        n_neighbors_step=5,
-        min_dist_range=(0.05, 0.21),
-        min_dist_step=0.05,
+        min_dist=0.1,
         n_neighbors=15,
         metric='euclidean',
         n_epochs=None
@@ -70,10 +67,10 @@ def umap(
 
     Args:
     n_neighbors (int): This parameter controls how UMAP balances local versus
-    global structure in the data. low is local, high is more global.
+    global structure in the data. low is local, high is more global. from 5 to 50
 
     min_dist (int): The min_dist parameter controls how tightly UMAP is
-    allowed to pack points together.
+    allowed to pack points together. from 0.05 to 0.5 
 
     metric (str): This controls how distance is computed in the ambient space
     of the input data.
@@ -105,26 +102,19 @@ def umap(
 
     models = {}
     print('umap')
-    for c_neighbors in range(
-            n_neighbors_range[0],
-            n_neighbors_range[1],
-            n_neighbors_step
-            ):
-        print('neighbors: {}'.format(c_neighbors))
-        for c_min_dist in np.arange(
-                min_dist_range[0],
-                min_dist_range[1],
-                min_dist_step
-                ):
-            c_min_dist = round(c_min_dist, 2)
-            print('c_min_dist: {}'.format(c_min_dist))
-            # models['n{}_d{}'.format(c_neighbors, c_min_dist)] = {
-            #     'model':
-            #         umapo.UMAP(
-            #             n_neighbors=c_neighbors,
-            #             min_dist=c_min_dist,
-            #             metric=metric,
-            #             n_epochs=n_epochs
-            #         )
-            # }
+
+
+
+    models['n{}_d{}'.format(n_neighbors, min_dist)] = {
+        'model':
+            umapo.UMAP(
+                n_neighbors=n_neighbors,
+                min_dist=min_dist,
+                metric=metric,
+                n_epochs=n_epochs
+            )
+    }
     return models
+
+
+
