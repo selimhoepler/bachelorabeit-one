@@ -454,12 +454,7 @@ const legBtnAll = document.getElementById('leg-btn-all');
 
 
 /* 
-
 Data input section
-
-
-
-
  */
 
 
@@ -481,7 +476,7 @@ dataSubmitBtn.addEventListener('click', async () => {
         return;
     }
 
-    // Change style of input btn // Could be doing this in a function
+    // Change style of input btn 
     dataSubmitBtn.textContent = 'Loading...';
     dataSubmitBtn.disabled = true;
     dataSubmitBtn.classList.remove('hover:bg-indigo-600');
@@ -512,19 +507,22 @@ dataSubmitBtn.addEventListener('click', async () => {
             const attributes = data.response.attributes
             console.log(attributes)
 
-            // Erstelle die Checkboxen
+            // Create Checkboxes
             createSignalCheckboxes(checkBoxData);
             createAttributeCheckboxes(attributes)
 
 
-            // enable preset selection TODO: Enable disabled execute BTN (maybe after everythings done)
+            // enable preset selection 
             blurryContainers.forEach((element) => {
                 element.classList.remove('opacity-30');
                 element.classList.remove('pointer-events-none')
             });
+
+
             presetDropdown.disabled = false;
             sendButton.disabled = false;
             sendButton.classList.add('hover:bg-blue-600');
+
             showToast('Data succesfully uploaded', 'success')
         } else {
             console.error('Fehler beim Senden der Dateien:', response);
@@ -553,8 +551,8 @@ dataSubmitBtn.addEventListener('click', async () => {
 ///
 
 
-//This function creates the signal checkboxes. Each signal gets One Checkbox to be enabled and then 3 checkboxes for
-// front, trans and sag
+// This function creates the signal checkboxes. Each signal gets One Checkbox to be enabled and then 3 checkboxes for
+// sag, front, trans as in sagittal, frontal and transversal planes of the human body
 function createSignalCheckboxes(jsonData) {
     const container = document.getElementById('signal-checkbox-container');
 
@@ -659,7 +657,7 @@ function createAttributeCheckboxes(jsonData) {
     // Create checkboxes 
     for (const element in int_data) {
 
-        // Filtering specific unnecessary attributes. (IDK how to dynamicly do that ?)
+        // Filtering specific unnecessary attributes. (TODO: ask a professional, which attributes are important, which are not)
         if (int_data[element] !== 'Vorname' && int_data[element] !== 'DBId' && int_data[element] !== 'Num_Matfiles') {
             const checkboxContainer = document.createElement('div');
             checkboxContainer.classList.add('flex');
@@ -705,7 +703,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     sendButton.addEventListener("click", async () => {
-        
+
 
 
         const preset = getSignalJSON();
@@ -718,6 +716,7 @@ document.addEventListener("DOMContentLoaded", function () {
             sendButton.classList.remove('hover:bg-indigo-600');
             // The array is not empty
 
+            // try sending preset to the backend
             try {
                 const response = await fetch("/signals", {
                     method: "POST",
@@ -728,17 +727,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
 
                 if (response.ok) {
+
                     console.log("Option successfully sent to backend.");
                     console.log(await response.json());
                     showToast('Successfully read signals', 'success');
                 } else {
+
                     console.error("Error while sending option to the backend:", response.statusText);
                     showToast('Error while reading signals', 'danger');
                 }
             } catch (error) {
+
                 console.error("Error while sending option to the backend:", error);
                 showToast('Error while reading signals', 'danger');
             } finally {
+
+                // reset send Button
                 sendButton.textContent = 'Send';
                 sendButton.disabled = false;
                 sendButton.classList.add('hover:bg-indigo-600');
@@ -775,7 +779,7 @@ const getSignalJSON = () => {
             const signalBoxes = signalBoxesContainer.querySelectorAll('input[type="checkbox"]');
 
 
-            // This part exists because the presets.JSON uses the numbers 1,3,5 to identify 
+            // This part exists because the presets.json uses the numbers 1,3,5 to identify 
             //if either sag, trans or front was selcted
             signalBoxes.forEach((signalBox, index) => {
                 if (signalBox.checked) {
@@ -787,6 +791,7 @@ const getSignalJSON = () => {
         }
     });
 
+    // structures object into signals and columns 
     const signalData = {
         signals: signals,
         columns: columns
@@ -867,15 +872,13 @@ function getCheckedAttributes() {
     });
 
 
-
-
-
     return checkedList
 }
 
 // helper function for getSelectedDatapoints
 // checks if the specific datapoint already has a checked attribute, if no it gets added with its value,
 // if yes it gets added with different value
+// values are needed for colorcodig in the visualization
 function updateDbidList(dbidlist, dbid, incrementValue) {
     const found = dbidlist.find(item => Object.keys(item)[0] === dbid.toString());
 
@@ -885,8 +888,6 @@ function updateDbidList(dbidlist, dbid, incrementValue) {
         dbidlist.push({ [dbid]: incrementValue });
     }
 }
-
-
 
 
 
@@ -918,7 +919,7 @@ function getSelectedDatapoints() {
                 });
 
                 console.log(indexlist);
-                //Depending on sumAttributes, return a list of indices either of the points that match ONE of the checked attributes
+                // Depending on sumAttributes, return a list of indices either of the points that match ONE of the checked attributes
                 // or the points that match ALL of the checked attributes
                 if (sumAttributes) { // EITHER of the attributes
                     data.data.forEach(row => {
@@ -980,13 +981,6 @@ function getSelectedDatapoints() {
 
 
 
-
-
-
-
-
-
-
 /* 
 
 When an attribute checkbox is selected, the data on chart should be updated instantly
@@ -1006,14 +1000,15 @@ attributeContainer.addEventListener('change', async (e) => {
 
 
 
-
+            // map datapoints from the ApexCharts instance
             chart.w.config.series[0].data.map((point, index) => {
                 let value;
                 const matchedObj = indexList.find(obj => obj.hasOwnProperty(point.z));
 
+
                 if (matchedObj) {
                     value = matchedObj[point.z];
-                    pushThisIndexAsDiscrete(index, value);  // Assuming you want to pass the value to the function
+                    pushThisIndexAsDiscrete(index, value);  
                 }
 
             });
@@ -1041,7 +1036,7 @@ attributeContainer.addEventListener('change', async (e) => {
 
 
             // trigger the dataCloud infoBox change
-            dataCloudSelected();
+            dataCloudSelected('attributeSelection', 0, 0);
 
 
         } catch (error) {
@@ -1051,6 +1046,8 @@ attributeContainer.addEventListener('change', async (e) => {
 });
 
 
+
+// sets color for specific Datapoint with value coming from the attributes 
 function pushThisIndexAsDiscrete(index, value) {
     let color = '#C73E1D'
 
@@ -1086,6 +1083,7 @@ function pushThisIndexAsDiscrete(index, value) {
         size: 6
     }
 
+    // push to global list, which will be used to update the visualization
     discreteList.push(discrete);
 }
 
@@ -1097,12 +1095,15 @@ function pushThisIndexAsDiscrete(index, value) {
 
 
 /* 
-PRESETS FROM signals.JSON
+PRESETS FROM signals.json
 -all_uc1
 -thorax(andreas)
 -knee_angles
 -knee_angles&moments */
 
+
+// eventlistener for the preset dropdown, when a preset is selected, the fuction convertPresetToCheckboxes  will becalled
+// to check the boxes accordingly
 presetDropdown.addEventListener("change", async () => {
 
     const preset = presetDropdown.value
@@ -1139,10 +1140,7 @@ presetDropdown.addEventListener("change", async () => {
             signalBoxes.forEach(box => box.checked = false);
         });
     }
-
-
-}
-)
+});
 
 
 
@@ -1154,6 +1152,10 @@ presetDropdown.addEventListener("change", async () => {
 
 
 
+// gets called when a datapoint in the visualization is selected
+// gets the 'ID' as z from the datapoint, 
+// gets all attribute which correspond to this datapoint
+// calls displayInformation to displays information ;)
 async function dataPointSelected(index) {
     console.log('datapoint selected', index);
     console.log(chart.w.config.series[0].data[index]);
@@ -1170,6 +1172,7 @@ async function dataPointSelected(index) {
 
         displayInformation(intAttributeNameList, strAttributeNameList);
 
+        // when loading the app new and clicking a DP for the first time, user will be directed to the inofrmation section
         if (firstClick) {
             const element = document.getElementById("yellowCont");
             element.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
@@ -1180,6 +1183,8 @@ async function dataPointSelected(index) {
     }
 }
 
+
+// get all the matching attributes for a specific DP with its 'DBID' from attributes.json
 function getAttributes(dbid) {
     return new Promise((resolve, reject) => {
         var intAttributeNameList = [];
@@ -1190,6 +1195,7 @@ function getAttributes(dbid) {
             .then(data => {
                 const dbidIndex = data.columns.indexOf("DBId");
 
+                // iterate through rows, if correct row: iterate through columns and push all columnnames which are set to 1 and all str cols
                 data.data.forEach(row => {
                     if (row[dbidIndex] === dbid) {
                         row.forEach((col, colindex) => {
@@ -1201,6 +1207,8 @@ function getAttributes(dbid) {
                         });
                     }
                 });
+
+                // retuns obj structured into int and str attributes
                 resolve([intAttributeNameList, strAttributeNameList]);
             })
             .catch(error => {
@@ -1212,16 +1220,20 @@ function getAttributes(dbid) {
 
 
 
+// display a chart of info of the selected cloud (either by attribute selection or brush selectioon)
+// get all 1s and all strAttributes in attribute.json of the datapoints in cloud
+// add number of attributes
+// chart the distribution of attributes as a bar chart through displayCloudInformation
+async function dataCloudSelected(method, xaxis, yaxis) {
 
-async function dataCloudSelected() {
-    // display a chart of info of the selected cloud
-    // get all 1s of the datapoints in cloud
-    // add number of 1s of attributes
-    // chart the distribution of attributes as a pie chart or something
 
     try {
-        const selectedDatapoints = await getSelectedDatapoints();
-
+        let selectedDatapoints
+        if (method == 'attributeSelection') {
+            selectedDatapoints = await getSelectedDatapoints();
+        } else if (method == 'brushSelection') {
+            selectedDatapoints = await getBrushDatapoints(xaxis, yaxis);
+        }
         const response = await fetch('/static/json/attributes.json');
         const data = await response.json();
 
@@ -1229,6 +1241,7 @@ async function dataCloudSelected() {
 
         var attributeStatisticList = [];
 
+        // iterate through attribute rows to get the attribute
         data.data.forEach(row => {
             const matchedObj = selectedDatapoints.find(obj => obj.hasOwnProperty(row[dbidIndex]));
             if (matchedObj) {
@@ -1252,10 +1265,9 @@ async function dataCloudSelected() {
 
 
 
-
+// displays information in info-container about a single Datapoint
 function displayInformation(intAttributeNameList, strAttributeNameList) {
 
-    console.log('Were in the function barude', intAttributeNameList, strAttributeNameList);
 
     const generalInfoContainer = document.getElementById('general-info-container');
     const attributeInfoContainer = document.getElementById('attribute-info-container');
@@ -1295,7 +1307,7 @@ function displayInformation(intAttributeNameList, strAttributeNameList) {
 }
 
 
-
+// displays attribute distribution of selected cloud
 function displayCloudInformation(attributeList) {
     // Preprocess data to get frequency of each unique value
     const frequency = attributeList.reduce((acc, val) => {
@@ -1351,6 +1363,23 @@ function displayCloudInformation(attributeList) {
 }
 
 
+// get ids from brsuhed selection, gets called when brush selection
+function getBrushDatapoints(xaxis, yaxis) {
+    return new Promise((resolve, reject) => {
+        const points = chart.w.config.series[0].data
+        let dbidlist = []
+
+        points.forEach(point => {
+            if (point.x > xaxis['min'] && point.x < xaxis['max'] && point.y > yaxis['min'] && point.y < yaxis['max']) {
+                console.log(point.z)
+                dbidlist.push({ [point.z]: 1 });
+            }
+        });
+
+        console.log(dbidlist)
+        resolve(dbidlist)
+    });
+}
 
 
 
@@ -1362,10 +1391,14 @@ function displayCloudInformation(attributeList) {
 //
 modelButtons.forEach(btn => {
 
-
+    // if ccreate model btn is clicked, collect user specified settings and send it to backend
     btn.addEventListener("click", async () => {
+
+        // get t-SNE or UMAP settings from user
         const perplexity = parseInt(perplexitySlider.value, 10);
         const iterations = parseInt(iterationsSlider.value, 10);
+
+        // not customizable as of now
         const dMetricValue = "euclidean"
 
         const minDistValue = parseFloat(minDistSlider.value);
@@ -1377,7 +1410,7 @@ modelButtons.forEach(btn => {
         const modelType = btn.value;
 
 
-        console.log(perplexity, iterations, dMetricValue, minDistValue, nNeighborsValue);
+
 
         try {
             const response = await fetch("/models", {
@@ -1389,10 +1422,9 @@ modelButtons.forEach(btn => {
                     tsne_settings: {
                         tsne_perplexity: perplexity,
                         tsne_iterations: iterations,
-                        // Assuming you have d_metric somewhere in your JS
                         d_metric: dMetricValue
                     },
-                    // Assuming you also have UMAP settings in your JS
+                    
                     umap_settings: {
                         min_dist: minDistValue,
                         n_neighbors: nNeighborsValue
@@ -1406,6 +1438,8 @@ modelButtons.forEach(btn => {
                 console.log("Models successfully sent to backend.");
                 console.log(await response.json());
                 showToast('Models successfully loaded', 'success')
+
+                // activate containers SHOULD BE REMOVED IN PRODUCTION BTW !!!
                 blurryContainers.forEach((element) => {
                     element.classList.remove('opacity-30');
                     element.classList.remove('pointer-events-none')
@@ -1430,7 +1464,7 @@ modelButtons.forEach(btn => {
 // Model execution section
 //
 
-
+// get all tooltipdata from all datapoints
 async function getTooltipData() {
     const data = chart.w.config.series[0].data;
 
@@ -1440,17 +1474,18 @@ async function getTooltipData() {
         const dbid = index.z;
         const dataAttributes = await getAttributes(dbid);
 
-
+        // hardcoded for now, has to be made differently when submitted data is different,
+        // maybe provided files should have one specific affected site col 
         let affectedSide = '';
-        if (dataAttributes[0].includes('UC1_betroffen_LI') && dataAttributes[0].includes('UC1_betroffen_RE')){
+        if (dataAttributes[0].includes('UC1_betroffen_LI') && dataAttributes[0].includes('UC1_betroffen_RE')) {
             affectedSide = 'Both';
-        } else if (dataAttributes[0].includes('UC1_betroffen_LI')){
+        } else if (dataAttributes[0].includes('UC1_betroffen_LI')) {
             affectedSide = 'Left';
-        } else if (dataAttributes[0].includes('UC1_betroffen_RE')){
+        } else if (dataAttributes[0].includes('UC1_betroffen_RE')) {
             affectedSide = 'Right';
         }
-        
-        
+
+
 
         const stringAttributes = dataAttributes[1];
 
@@ -1506,7 +1541,7 @@ executeButton.addEventListener("click", async () => {
                 y: item.y,
                 z: item.z,
                 age: item.age,
-                
+
             }));
 
 
@@ -1550,7 +1585,34 @@ executeButton.addEventListener("click", async () => {
                             markerClick: function (event, chartContext, { seriesIndex, dataPointIndex, config }) {
                                 dataPointSelected(dataPointIndex);
                             },
-                        }
+                            selection: function (chartContext, { xaxis, yaxis }) {
+                                console.log(xaxis, yaxis)
+                                dataCloudSelected('brushSelection', xaxis, yaxis);
+                            }
+                        },
+                        selection: {
+                            enabled: true,
+                            type: 'xy',
+                            fill: {
+                                color: '#24292e',
+                                opacity: 0.1
+                            },
+                            stroke: {
+                                width: 1,
+                                dashArray: 3,
+                                color: '#24292e',
+                                opacity: 0.4
+                            },
+                            xaxis: {
+                                min: undefined,
+                                max: undefined
+                            },
+                            yaxis: {
+                                min: undefined,
+                                max: undefined
+                            }
+                        },
+
                     },
                     xaxis: {
                         show: false,
@@ -1558,7 +1620,7 @@ executeButton.addEventListener("click", async () => {
                         labels: {
                             show: false,
                         },
-                        
+
                     },
                     yaxis: {
                         show: false,
@@ -1615,7 +1677,7 @@ executeButton.addEventListener("click", async () => {
             }
         } else {
             console.error("Something went wrong while executing:", response.statusText);
-            showToast('Something went wrong while executing', 'danger')
+            showToast('Something went wrong while executing. Maybe try a different set of signals!', 'danger')
         }
     } catch (error) {
         console.error("Something went wrong while executing:", error);

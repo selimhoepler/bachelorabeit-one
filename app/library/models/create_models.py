@@ -1,3 +1,12 @@
+"""
+This module creates either t-SNE or UMAP models with specific settings.
+
+Functions:
+- tsne (args): greate a TSNE model from sklearn.manifold.TSNE
+- umap (args): greate a UMAP model from the python umap library
+"""
+
+
 import multiprocessing
 
 from sklearn.manifold import TSNE
