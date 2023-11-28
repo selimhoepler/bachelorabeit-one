@@ -19,13 +19,13 @@
 * Inside your folder (the one where the downloaded repo is located at), open a new terminal window.
 * Explanation for every OS: https://www.groovypost.com/howto/open-command-window-terminal-window-specific-folder-windows-mac-linux/
 
-* in your terminal type `docker build -t similariGAIT .`
+* in your terminal type `docker build -t similarigait .`
 * wait until it is finished
 * if an error occurs, try again or check if your terminal is INSIDE the folder where the Dockerfile is located
 
 ## Running the program
 
-* After having done the steps above open your terminal anywhere and run `docker run -p 80:80 similariGAIT`
+* After having done the steps above open your terminal anywhere and run `docker run -p 80:80 similarigait`
 * Wait for the server to load up and navigate to 'http://127.0.0.1:80'
 
 
