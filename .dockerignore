@@ -1,0 +1,11 @@
+# .dockerignore
+
+# Ignore virtual environment
+.first-try-venv/
+
+# Ignore Git and VS Code settings
+.gitignore
+.vscode/
+
+# Optionally ignore Python cache directories
+__pycache__/

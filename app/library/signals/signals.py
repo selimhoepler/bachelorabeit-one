@@ -17,33 +17,6 @@ from app.library.ingest import ingest as ingest
 from app.library.data.prepare import create_data_signalbase
 from icecream import ic
 
-# class Signals():
-#     def __init__(self):
-#         temp_path = os.path.join(os.getcwd(), r'app\library\config')
-#         self.config_path = self.check_path_exists(temp_path)
-#         self.defaults = self.load_defaults('signals.json')
-    
-#     def load_defaults(self, file_name):
-#         path = os.path.join(self.config_path, file_name)
-        
-#         ret_val: defaultdict(dict)
-#         ret_val = self.read_json_file(path)
-        
-#         return ret_val
-
-#     def read_json_file(self, path):
-#         ret_val = None
-#         with open(path) as file:
-#             content = file.read()
-#             json_val = json.loads(content)
-#             ret_val = dict(json_val)
-#         return ret_val
-
-#     def check_path_exists(self, path):
-#         if os.path.exists(path):
-#             return path
-#         else:
-#             raise FileNotFoundError(f'{path} directory not found')
 
 
 

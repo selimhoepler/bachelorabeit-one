@@ -36,12 +36,13 @@ def getAttributes(metadata):
     # Select columns with specific names
     string_columns = [col for col in metadata.columns if col in ['Geschl', 'Grobkategorie']]
 
+    unique_values = {col: metadata[col].unique().tolist() for col in string_columns}
    
 
 
 
 
-    return int_columns, string_columns
+    return int_columns, unique_values, string_columns
 
 
 def getOnlySelectedData(ids, metadata):
@@ -61,7 +62,7 @@ def getOnlySelectedData(ids, metadata):
     selected_ids_set = set(ids)
 
     # get attribute name list from metadata
-    int_attribute_names,  str_attribute_names = getAttributes(metadata)
+    int_attribute_names, _,  str_attribute_names = getAttributes(metadata)
 
     attribute_names = int_attribute_names + str_attribute_names
     # Filter rows: Keep only rows where 'DBId' matches one of the selected IDs

@@ -17,10 +17,17 @@ import pickle
 import os
 import json, numpy as np
 import math
+from pathlib import Path
 
-# Path to .pkl and .json files
-pickle_path = r"app\temp"
-json_path = r"static\json"
+
+# Default paths (relative) for local development
+default_pickle_path = r"app\temp"
+default_json_path = r"static\json"
+
+# Use environment variables if they are set, otherwise use default
+pickle_path = Path(os.environ.get("PICKLE_PATH", default_pickle_path))
+json_path = Path(os.environ.get("JSON_PATH", default_json_path))
+
 
 def savePickle(array_data, meta_data, side, scalar_data):
 
@@ -71,7 +78,6 @@ def loadPickle():
     with open(os.path.join(pickle_path, "scalar_data.pkl"), "rb") as f:
         scalar_data = pickle.load(f)
 
-        print(f'Scalar_data is type: {type(scalar_data)}')
 
     return array_data, meta_data, side, scalar_data
 

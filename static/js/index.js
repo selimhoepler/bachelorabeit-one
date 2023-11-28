@@ -2,400 +2,6 @@
 
 
 
-
-/* TEST OBJEKT */
-
-
-const test_data =
-{
-    "angle_moment_values": {
-        "L_AnkleAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "L_AnkleMoment_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "L_ElbowAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "L_FootProgressAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "L_HeadAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "L_HipAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "L_HipMoment_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "L_KneeAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "L_KneeMoment_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "L_NeckAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "L_PelvisAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "L_ShoulderAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "L_SpineAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "L_ThoraxAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "L_WristAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_AnkleAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_AnkleMoment_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_ElbowAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_FootProgressAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_HeadAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_HipAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_HipMoment_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_KneeAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_KneeMoment_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_NeckAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_PelvisAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_ShoulderAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_SpineAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_ThoraxAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_WristAngles_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        }
-    },
-    "power_values": {
-        "L_AnklePower_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "L_HipPower_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "L_KneePower_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_AnklePower_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_HipPower_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        },
-        "R_KneePower_mean_norm_Verlauf": {
-            "enabled": false,
-            "sag": false,
-            "front": false,
-            "trans": false
-        }
-    }
-}
-
-const testAttributes = {
-    "int_attributes": [
-        "Vorname",
-        "NMP",
-        "NMP_Hemi_re",
-        "NMP_Hemi_li",
-        "Klumpfu__re",
-        "Klumpfu__li",
-        "Torsion_Allg_re",
-        "Torsion_Allg_li",
-        "Torsion_OS_innen_re",
-        "Torsion_OS_au_en_re",
-        "Torsion_OS_innen_li",
-        "Torsion_OS_au_en_li",
-        "Torsion_US_innen_re",
-        "Torsion_US_au_en_re",
-        "Torsion_US_innen_li",
-        "Torsion_US_au_en_li",
-        "Varus_OS_re",
-        "Varus_OS_li",
-        "Varus_US_re",
-        "Varus_US_li",
-        "Varus_Allg_re",
-        "Varus_Allg_li",
-        "Valgus_OS_re",
-        "Valgus_OS_li",
-        "Valgus_US_re",
-        "Valgus_US_li",
-        "Valgus_Allg_re",
-        "Valgus_Allg_li",
-        "Valgus_li",
-        "Valgus_re",
-        "Varus_li",
-        "Varus_re",
-        "Front_Mix_li",
-        "Front_Mix_re",
-        "GA_Valgus_re",
-        "GA_Valgus_li",
-        "GA_Varus_re",
-        "GA_Varus_li",
-        "Plattfuss_re",
-        "Plattfuss_li",
-        "Sprungelenksproblem_re",
-        "Sprungelenksproblem_li",
-        "Knieproblem_re",
-        "Knieproblem_li",
-        "H_ftproblem_re",
-        "H_ftproblem_li",
-        "Wirbels_ulenproblem_re",
-        "Wirbels_ulenproblem_li",
-        "NORM0_7_habituell",
-        "NORM0_7_langsam",
-        "NORM0_7_schnell",
-        "NORM8_20_habituell",
-        "NORM8_20_langsam",
-        "NORM8_20_schnell",
-        "NORM21_30_habituell",
-        "NORM21_30_langsam",
-        "NORM21_30_schnell",
-        "Dateng_teFrontalAusreichend_re",
-        "Dateng_teFrontalAusreichend_li",
-        "Alter0_7",
-        "Alter8_20",
-        "Alter21_30",
-        "Alter31_",
-        "CT_OS_au_en_re",
-        "CT_OS_au_en_li",
-        "CT_OS_innen_re",
-        "CT_OS_innen_li",
-        "CT_US_au_en_re",
-        "CT_US_au_en_li",
-        "CT_US_innen_re",
-        "CT_US_innen_li",
-        "GA_OS_au_en_re",
-        "GA_OS_au_en_li",
-        "GA_OS_innen_re",
-        "GA_OS_innen_li",
-        "GA_US_au_en_re",
-        "GA_US_au_en_li",
-        "GA_US_innen_re",
-        "GA_US_innen_li",
-        "GA_OS_au_en_1STD_re",
-        "GA_OS_au_en_1STD_li",
-        "GA_OS_innen_1STD_re",
-        "GA_OS_innen_1STD_li",
-        "GA_US_au_en_1STD_re",
-        "GA_US_au_en_1STD_li",
-        "GA_US_innen_1STD_re",
-        "GA_US_innen_1STD_li",
-        "AltesLabor",
-        "NeuesLabor",
-        "Num_Matfiles",
-        "All_ersteMessung",
-        "All_VorOP",
-        "All_nOpPrae",
-        "All_OPInKG",
-        "All_GaVorOP",
-        "All_Pr_",
-        "All_Post",
-        "NumOP",
-        "UC1_GaVorOP",
-        "UC1_betroffen_RE",
-        "UC1_betroffen_LI",
-        "HTEP_pre",
-        "HTEP_pre_RE",
-        "HTEP_pre_LI",
-        "NMPII",
-        "Hilfsmittel",
-        "DBId"
-    ],
-    "string_attributes": {
-        "Geschl": [
-            "weiblich",
-            "maennlich"
-        ],
-        "Grobkategorie": [
-            "Achsfehlstellung",
-            "ICP",
-            "Klumpfuss",
-            "Plattfuss",
-            "Sonstiges",
-            "SPG-TEP",
-            "Kreuzband",
-            "K-TEP"
-        ]
-    }
-}
-
-/* TEST OBJEKT ENDE */
-
-
-
-const testButton = document.getElementById("test-button");
-const testButton2 = document.getElementById("test-button2");
-
-
-
-
-
-
-
-
-
-testButton.addEventListener("click", () => {
-    console.log(test_data);
-    createSignalCheckboxes(test_data);
-});
-
-testButton2.addEventListener("click", () => {
-    console.log(testAttributes);
-    createAttributeCheckboxes(testAttributes);
-});
-
-
-
-
-
-/* 
-    Test section end
-*/
-
-
-
-
-
-
 // declaring Constant variables
 
 const dataSubmitBtn = document.getElementById('data-submit-button');
@@ -622,9 +228,13 @@ function createAttributeCheckboxes(jsonData) {
     const int_data = jsonData.int_attributes;
     const string_data = jsonData.string_attributes;
 
+
+
     for (const category in string_data) {
 
+
         for (const key in string_data[category]) {
+
 
 
             const checkboxContainer = document.createElement('div');
@@ -823,7 +433,6 @@ function convertPresetToCheckboxes2(preset) {
         // Reset all sub-checkboxes
         signalBoxes.forEach(box => {
             box.checked = false;
-            console.log(box)
         });
 
 
@@ -1439,11 +1048,6 @@ modelButtons.forEach(btn => {
                 console.log(await response.json());
                 showToast('Models successfully loaded', 'success')
 
-                // activate containers SHOULD BE REMOVED IN PRODUCTION BTW !!!
-                blurryContainers.forEach((element) => {
-                    element.classList.remove('opacity-30');
-                    element.classList.remove('pointer-events-none')
-                });
             } else {
                 console.error("Fehler beim Senden der Modelle ans Backend:", response.statusText);
                 showToast('Error while loading models', 'danger')
@@ -1677,11 +1281,15 @@ executeButton.addEventListener("click", async () => {
             }
         } else {
             console.error("Something went wrong while executing:", response.statusText);
+            if (response.status === 404){
+                showToast('Something went wrong. It seems like you did not load a model or signals before!', 'danger')
+            } if (response.status === 500){
             showToast('Something went wrong while executing. Maybe try a different set of signals!', 'danger')
+            }
         }
     } catch (error) {
         console.error("Something went wrong while executing:", error);
-        showToast('Something went wrong while executing', 'danger')
+        //showToast('Something went wrong while executing', 'danger')
     }
     finally {
         executeButton.textContent = 'Execute';

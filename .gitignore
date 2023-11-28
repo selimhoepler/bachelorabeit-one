@@ -1,6 +1,6 @@
 /first-try-venv
 
-/app/temp
+
 
 tsne_dict.txt
 
@@ -14,5 +14,6 @@ app_log.txt
 
 /my-venv
 
+__pycache__/
 **/__pycache__/
 app_log.txt

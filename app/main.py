@@ -13,16 +13,17 @@ The application structure is divided into several modules:
 - Execution: Executes the selected model and prepares the visualization data.
 
 This app is designed for the purpose of a bachelor thesis, it includes code provided by Dipl.-Ing. Djordje Slijepčević.
-It aims to be providing an easy-to-use interface for complex data processing and visualization tasks.
+It aims to be providing an easy-to-use interface for complex GAIT data processing and visualization tasks.
 
 Created by: Selim Höpler
 """
 
 # FastAPI imports
-from fastapi import FastAPI, Request, File, UploadFile, Body
+from fastapi import FastAPI, Request, File, UploadFile, Body, HTTPException
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+
 
 # module imports from app files
 from .library.ingest.ingest import *
@@ -46,6 +47,9 @@ templates = Jinja2Templates(directory='templates')
 
 # setting up logging
 logging.basicConfig(filename='app_log.txt', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+
+
 
 
 #creating Tsne_Setting and UMAP_Setting as a pydantic BaseModel class
@@ -95,6 +99,10 @@ async def upload_files(data_file: UploadFile = File(...), metadata_file: UploadF
     - Temporary files are created to handle the uploaded files.
     """
 
+
+    print("Received request to /ingest:")
+    print(f"Data File Name: {data_file.filename}")
+    print(f"Metadata File Name: {metadata_file.filename}")
 
 
     try:
@@ -310,26 +318,43 @@ async def execute_all_models(data: ExecuteModel):
     interval_list = list()
     interval_list.append(interval)
 
-    try:
+    
         # getting the needed files previously saved, 
         # models = t-SNE or UMPA model
         # signal_data = filtered data based on signal selection, where the model is being used on
         # metadata and scalar_data for extra information
-
+    try:
+        # Load models and signal_data through custom functions
         models = helpers.loadDict("models")
         signal_data = helpers.loadDict("signal_data")
-        _,metadata ,_ ,scalar_data = helpers.loadPickle()
-        
+        _, metadata, _, scalar_data = helpers.loadPickle()
 
+    except FileNotFoundError as file_not_found_error:
+        # Handle the case where one of the required files is not found
+        logging.exception(file_not_found_error)
+        raise HTTPException(status_code=404, detail="File not found")
+
+    except Exception as load_error:
+        # Handle other exceptions that may occur during loading
+        logging.exception(load_error)
+        raise HTTPException(status_code=500, detail="Error loading data")
+
+    try:
+        # Compute results
         tsne_results, model_keys = execute_models.execute(
-        models,
-        signal_data,
-        interval_list,
-        do_print=False,
-        leg=selected_legs,
-    )
+            models,
+            signal_data,
+            interval_list,
+            do_print=False,
+            leg=selected_legs,
+        )
 
-        try:
+    except Exception as computation_error:
+        # Handle exceptions that may occur during computation
+        logging.exception(computation_error)
+        raise HTTPException(status_code=500, detail="Error computing results")
+
+    try:
             
             
             print(model_keys)
@@ -384,21 +409,15 @@ async def execute_all_models(data: ExecuteModel):
 
             # write_dict_to_text_file(tsne_results, output_file_path) #debugging
 
-        except Exception as e:
+    except Exception as e:
             print("Error while preparing results:", e)
             logging.exception(e)
             return JSONResponse(content={"error": str(e)}, status_code=500)
 
         # if everything was successfull, sending data to Frontend
-        return JSONResponse(content=json.loads(json_str), status_code=200)
+    return JSONResponse(content=json.loads(json_str), status_code=200)
     
 
-    except ValueError as ve:
-        logging.exception(ve)
-        return JSONResponse(content={"error": str(e)}, status_code=500)
-    
-    except Exception as e:
-        logging.exception(e)
-        return JSONResponse(content={"error": str(e)}, status_code=500)
+
     
 
