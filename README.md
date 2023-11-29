@@ -1,8 +1,8 @@
-# similariGAIT / gaitexplorationtool
+## similariGAIT / gaitexplorationtool
 
-## INSTALLATION
+# INSTALLATION
 
-# Steps before running this program
+## Steps before running this program
 
 * YOU ONLY HAVE TO DO THIS ONCE *
 * Download docker for your OS from https://docs.docker.com/get-docker/ and install it
@@ -30,27 +30,27 @@
 
 
 
-## Program explanation
+# Program explanation
 
-# Data input
+## Data input
 
 * put your .csv with the main data into the 'data-input' and your metadata .csv into the 'metadata-input' and press submit
 * wait for the success message
 * if everything works, the bottom sections should now be accessible
 
-# Creating models
+## Creating models
 
 * select a setting for t-SNE or UMAP and create the model
 * for more information about the parameters click the infobox
-* this is the model whic will run on your data and provide the visualization
+* this is the model which will run on your data and provide the visualization
 
-# Signal selection
+## Signal selection
 
 * You can chose between provided signals to be included in the data the model will be run on
-* On the left box, select to include the signal and on the right side the boxes are for the sagittal, frontal and transversal signal
+* On the left box, select to include the signal and on the right side the boxes are for the sagittal, frontal and transversal signals
 * send signals and wait for the success message
 
-# Model Execution
+## Model Execution
 
 * Here you can run the model on the filtered data
 * choose the affected legs, which will decide which patients are included in the clustering
@@ -62,20 +62,20 @@
 
 * wait for the visualization
 
-# Highlighting attributes
+## Highlighting attributes
 
-* you can choose between 'union-highlighting' and 'intersection-highlgting'
+* you can choose between 'union-highlighting' and 'intersection-highlighting'
 * The difference is explained in the infobox
 * Select different attributes and see which points are highlighted
 
-# Interacting with the visualization
+## Interacting with the visualization
 
 * Hover over a datpoint to see general information about this patient
 * Select the Lasso tool on the top right to select a set of datapoints, scroll down to see the attribute distribution of the selected datapoints in a bar chart
 * when a set of points is highlighted, scroll down to see the attribute distribution of the highlighted datapoints in a bar chart
 * when you click on a datapoint, scroll down to see all the attributes which correspond to this specific datapoint
 * You can zoom in and out on the visualization
-* you can download the current visualization and highlihting as PNG, SVG or CSV(only coordinates)
+* you can download the current visualization and highlighting as PNG, SVG or CSV(only coordinates)
   
 
 
